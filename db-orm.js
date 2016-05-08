@@ -1,5 +1,5 @@
-var Sequelize=require('Sequelize');
-var EventEmitter=require('event');
+var Sequelize=require('sequelize');
+var EventEmitter=require('events');
 
 //Connection to the DB
 var sequelize=new Sequelize('mariadb://root:zhy1996martin@localhost/ClassNotify');
