@@ -89,10 +89,10 @@ var NotificationStatus=sequelize.define('notificationStatus',{
 //Notification.hasOne(Student,{as: 'Sender',constrains: false});
 //A Notification has many NotificationStatus as ReceiverStatuses
 //Notification.hasMany(NotificationStatus,{as: 'ReceiverStatuses',constrains: false});
-Notification.belongsToMany(Student,{as:'Receivers',through:NotificationStatus});
-Student.belongsToMany(Notification,{as:'ReceivedNotifications',through:NotificationStatus});
+Notification.belongsToMany(Student,{as:'Receivers',through:NotificationStatus,constraints:false});
+Student.belongsToMany(Notification,{as:'ReceivedNotifications',through:NotificationStatus,constraints:false});
 
-Notification.belongsTo(Student,{as:'Sender'});
+Notification.belongsTo(Student,{as:'Sender',constraints:false});
 //Sync all models
 var readyEvent=new EventEmitter();
 readyEvent.count=3;
