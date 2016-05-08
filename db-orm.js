@@ -1,5 +1,5 @@
-var Sequelize=require('Sequelize');
-var EventEmitter=require('event');
+var Sequelize=require('sequelize');
+var EventEmitter=require('events');
 
 //Connection to the DB
 var sequelize=new Sequelize('mariadb://root:zhy1996martin@localhost/ClassNotify');
@@ -53,7 +53,7 @@ var Notification=sequelize.define('notification',{
 	charset: 'utf8'
 });
 
-//Model: ReadingState
+//Model: ReadingState(join table)
 var NotificationStatus=sequelize.define('notificationStatus',{
 	id: {
 		type: Sequelize.UUID,
@@ -78,18 +78,21 @@ var NotificationStatus=sequelize.define('notificationStatus',{
 });
 //Defining relactions
 //A Student has many NotificationStatus as ReceivedNotifications
-Student.hasMany(NotificationStatus,{as: 'ReceivedNotifications',constrains: false});
+//Student.hasMany(NotificationStatus,{as: 'ReceivedNotifications',constrains: false});
 //A Student has many Notification as SentNotifications
-Student.hasMany(Notification,{as: 'SentNotifications',constrains: false});
+//Student.hasMany(Notification,{as: 'SentNotifications',constrains: false});
 //A NotificationStatus has one Student as Receiver
-NotificationStatus.hasOne(Student,{as: 'Receiver',constrains: false});
+//NotificationStatus.hasOne(Student,{as: 'Receiver',constrains: false});
 //A NotificationStatus has one Notification as Content
-NotificationStatus.hasOne(Notification,{as: 'Content',constrains: false});
+//NotificationStatus.hasOne(Notification,{as: 'Content',constrains: false});
 //A Notification has one Student as Sender
-Notification.hasOne(Student,{as: 'Sender',constrains: false});
+//Notification.hasOne(Student,{as: 'Sender',constrains: false});
 //A Notification has many NotificationStatus as ReceiverStatuses
-Notification.hasMany(NotificationStatus,{as: 'ReceiverStatuses',constrains: false});
+//Notification.hasMany(NotificationStatus,{as: 'ReceiverStatuses',constrains: false});
+Notification.belongsToMany(Student,{as:'Receivers',through:NotificationStatus});
+Student.belongsToMany(Notification,{as:'ReceivedNotifications',through:NotificationStatus});
 
+Notification.belongsTo(Student,{as:'Sender'});
 //Sync all models
 var readyEvent=new EventEmitter();
 readyEvent.count=3;
