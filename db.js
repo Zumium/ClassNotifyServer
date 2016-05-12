@@ -5,7 +5,9 @@ var initCache=require('sequelize-redis-cache');
 var redis=require('redis');
 
 //Connection to the DB
-var sequelize=new Sequelize('mariadb://root:zhy1996martin@localhost/ClassNotify');
+var sequelize=new Sequelize('mariadb://root:zhy1996martin@localhost/ClassNotify',{
+	logging:false
+});
 
 //Model: Student
 var Student=sequelize.define('student',{
