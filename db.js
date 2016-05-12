@@ -1,6 +1,8 @@
 var Sequelize=require('sequelize');
 //var EventEmitter=require('events');
 var Promise=require('bluebird');
+var initCache=require('sequelize-redis-cache');
+var redis=require('redis');
 
 //Connection to the DB
 var sequelize=new Sequelize('mariadb://root:zhy1996martin@localhost/ClassNotify');
@@ -113,3 +115,8 @@ exports.syncAll=function(){
 		},(err)=>{reject(err);});
 	});
 }
+//set up cache
+var rc=redis.createClient();
+var cacher=initCache(sequelize,rc);
+exports.StudentCache=cacher('student').ttl(5);
+exports.NotificationCache=cacher('notification').ttl(5);
