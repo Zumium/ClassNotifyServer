@@ -1,5 +1,6 @@
 var Sequelize=require('sequelize');
-var EventEmitter=require('events');
+//var EventEmitter=require('events');
+var Promise=require('bluebird');
 
 //Connection to the DB
 var sequelize=new Sequelize('mariadb://root:zhy1996martin@localhost/ClassNotify');
@@ -94,30 +95,21 @@ Student.belongsToMany(Notification,{as:'ReceivedNotifications',through:Notificat
 
 Notification.belongsTo(Student,{as:'Sender',foreignKey:'SenderID',constraints:false});
 Student.hasMany(Notification,{as:'SentNotifications',foreignKey:'SenderID',constraints:false});
-//Sync all models
-var readyEvent=new EventEmitter();
-readyEvent.count=3;
-readyEvent.finSync=function(){
-	var selfPointer=this;
-	selfPointer.count--;
-	if(selfPointer.count==0){
-		selfPointer.emit('ready');
-	}
-}
-
-Student.sync().then(()=>{
-	readyEvent.finSync();
-});
-NotificationStatus.sync().then(()=>{
-	readyEvent.finSync();
-});
-Notification.sync().then(()=>{
-	readyEvent.finSync();
-});
-
 
 //exports all models
 exports.Student=Student;
 exports.Notification=Notification;
 exports.NotificationStatus=NotificationStatus;
-exports.readyEvent=readyEvent;
+
+//sync all models
+exports.syncAll=function(){
+	return new Promise((resolve,reject)=>{
+		Student.sync().then(()=>{
+			Notification.sync().then(()=>{
+				NotificationStatus.sync().then(()=>{
+					resolve();
+				},(err)=>{reject(err);});
+			},(err)=>{reject(err);});
+		},(err)=>{reject(err);});
+	});
+}
