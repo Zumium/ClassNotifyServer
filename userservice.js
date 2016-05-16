@@ -43,3 +43,40 @@ exports.changeCharacter=function(id,newCharacter){
 		},(err)=>{reject(err);});
 	});
 }
+
+//获取个人信息
+exports.getStudentInfo=function(ids){
+	return new Promise((resolve,reject)=>{
+		if(util.isString(ids)){
+			if(ids==='all'){
+				//获取所有学生信息
+				db.StudentCache.findAll({
+					attributes:{exclude:['password']}
+				}).then((students)=>{
+					resolve(students);
+				},(err)=>{reject(err);});
+			}
+			else {
+				//获取指定学生信息
+				db.StudentCache.findOne({
+					where: {id: ids},
+					attributes:{exclude:['password']}
+				}).then((student)=>{
+					resolve(student);
+				},(err)=>{reject(err);});
+			}
+		}
+		else if(util.isArray(ids)){
+			//获取指定学生的信息
+			db.StudentCache.findAll({
+				where: {
+					id:ids
+				},
+				attributes:{exclude:['password']}
+			}).then((students)=>{
+				resolve(students);
+			},(err)=>{reject(err);});
+		}
+		else return reject(new Error('Wrong argument type'));
+	},(err)=>{reject(err);});
+}
