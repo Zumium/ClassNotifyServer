@@ -52,6 +52,7 @@ var Notification=sequelize.define('notification',{
     	publishDate: {
 		type: Sequelize.DATE,
     		field: 'NtfPublishDate',
+    		defaultValue: new Date(),
     		allowNull: false
 	}
 },{
