@@ -30,6 +30,7 @@ exports.changePassword=function(id,newPassword){
 		db.StudentCache.findOne({id:id}).then((student)=>{
 			student.password=newPassword;
 			student.save();
+			resolve();
 		},(err)=>{reject(err);});
 	});
 }
