@@ -22,7 +22,7 @@ exports.getPersonalNotifications=function(id,options){
 		}
 		else{
 			//作为接受者收到的通知
-			db.StudentCache.findOne({id:id}).then((student)=>{
+			db.StudentCache.findOne({where:{id:id}}).then((student)=>{
 				//已查询到接受者
 				//开始读取制定信息
 				student.getReceivedNotifications({
