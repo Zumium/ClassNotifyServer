@@ -16,7 +16,7 @@ exports.getPersonalNotifications=function(id,options){
 		for(var key in options){
 			allOptions[key]=options[key];
 		}
-		if(sent){
+		if(allOptions.sent){
 			//作为发送者发送出去的通知
 
 		}
