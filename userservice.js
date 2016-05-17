@@ -52,7 +52,7 @@ exports.getStudentInfo=function(ids){
 			if(ids==='all'){
 				//获取所有学生信息
 				db.StudentCache.findAll({
-					attributes:{exclude:['password']}
+					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((students)=>{
 					resolve(students);
 				},(err)=>{reject(err);});
@@ -61,7 +61,7 @@ exports.getStudentInfo=function(ids){
 				//获取指定学生信息
 				db.StudentCache.findOne({
 					where: {id: ids},
-					attributes:{exclude:['password']}
+					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((student)=>{
 					resolve(student);
 				},(err)=>{reject(err);});
@@ -73,7 +73,7 @@ exports.getStudentInfo=function(ids){
 				where: {
 					id:ids
 				},
-				attributes:{exclude:['password']}
+				attributes:{exclude:['password','createdAt','updatedAt']}
 			}).then((students)=>{
 				resolve(students);
 			},(err)=>{reject(err);});

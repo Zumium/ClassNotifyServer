@@ -19,7 +19,9 @@ exports.getPersonalNotifications=function(id,options){
 		if(allOptions.sent){
 			//作为发送者发送出去的通知
 			db.StudentCache.findOne({where:{id:id}}).then((student)=>{
-				student.getSentNotifications().then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
+				student.getSentNotifications({
+					attributes:{exclude:['createdAt','updatedAt']}
+				}).then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
 			},(err)=>{reject(err);});
 		}
 		else{
@@ -28,6 +30,7 @@ exports.getPersonalNotifications=function(id,options){
 				//已查询到接受者
 				//开始读取制定信息
 				student.getReceivedNotifications({
+					attributes:{exclude:['createdAt','updatedAt']},
 					through:{where:filterOptions(allOptions)},
 					order:[['publishDate','DESC']],
 					offset:allOptions['start'],
@@ -40,14 +43,20 @@ exports.getPersonalNotifications=function(id,options){
 
 var getNotiById=exports.getNotificationById=function(id){
 	return new Promise((resolve,reject)=>{
-		db.NotificationCache.findOne({where:{id:id}}).then((notification)=>{resolve(notification);},(err)=>{reject(err);});
+		db.NotificationCache.findOne({
+			where:{id:id},
+			attributes:{exclude:['createdAt','updatedAt']}
+		}).then((notification)=>{resolve(notification);},(err)=>{reject(err);});
 	});
 }
 
 exports.getNotificationReadingStatusById=function(id){
 	return new Promise((resolve,reject)=>{
 		getNotiById(id).then((notification)=>{
-			notification.getReceivers({joinTableAttributes:['read','star']}).then((results)=>{resolve(results);},(err)=>{reject(err);});
+			notification.getReceivers({
+				attributes:{exclude:['password','createdAt','updatedAt']},
+				joinTableAttributes:['read','star']
+			}).then((results)=>{resolve(results);},(err)=>{reject(err);});
 		},(err)=>{reject(err);});
 	});
 }
