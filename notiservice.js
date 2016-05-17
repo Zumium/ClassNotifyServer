@@ -45,7 +45,7 @@ var getNotiById=exports.getNotificationById=function(id){
 }
 
 exports.getNotificationReadingStatusById=function(id){
-	return new Promise((resolve.reject)=>{
+	return new Promise((resolve,reject)=>{
 		getNotiById(id).then((notification)=>{
 			notification.getReceivers({joinTableAttributes:['read','star']}).then((results)=>{resolve(results);},(err)=>{reject(err);});
 		},(err)=>{reject(err);});
