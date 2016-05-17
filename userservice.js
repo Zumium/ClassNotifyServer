@@ -4,7 +4,7 @@ var Promise=require('bluebird');
 //登录验证
 exports.vertifyUserLogin=function(id,password){
 	return new Promise((resolve,reject)=>{
-		db.StudentCache.findOne({where:{id:id}}).then((student)=>{
+		db.Student.findOne({where:{id:id}}).then((student)=>{
 			if(!student) return resolve(false,{message:'Username or password is wrong'});
 			else if(student.password!=password) return resolve(false,{message:'Username or password is wrong'});
 			else return resolve(true);
@@ -17,7 +17,7 @@ exports.vertifyUserLogin=function(id,password){
 //返回同学是否是班委
 exports.isAdmin=function(id){
 	return new Promise((resolve,reject)=>{
-		db.StudentCache.findOne({where:{id:id}}).then((student)=>{
+		db.Student.findOne({where:{id:id}}).then((student)=>{
 			if(student.character=='同学') return resolve(false);
 			else return resolve(true);
 		},(err)=>{reject(err);});
@@ -27,7 +27,7 @@ exports.isAdmin=function(id){
 //更换密码
 exports.changePassword=function(id,newPassword){
 	return new Promise((resolve,reject)=>{
-		db.StudentCache.findOne({where:{id:id}}).then((student)=>{
+		db.Student.findOne({where:{id:id}}).then((student)=>{
 			student.password=newPassword;
 			student.save();
 			resolve();
@@ -38,7 +38,7 @@ exports.changePassword=function(id,newPassword){
 //更改职位
 exports.changeCharacter=function(id,newCharacter){
 	return new Promise((resolve,reject)=>{
-		db.StudentCache.findOne({where:{id:id}}).then((student)=>{
+		db.Student.findOne({where:{id:id}}).then((student)=>{
 			student.character=newCharacter;
 			student.save();
 		},(err)=>{reject(err);});
@@ -51,7 +51,7 @@ exports.getStudentInfo=function(ids){
 		if(util.isString(ids)){
 			if(ids==='all'){
 				//获取所有学生信息
-				db.StudentCache.findAll({
+				db.Student.findAll({
 					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((students)=>{
 					resolve(students);
@@ -59,7 +59,7 @@ exports.getStudentInfo=function(ids){
 			}
 			else {
 				//获取指定学生信息
-				db.StudentCache.findOne({
+				db.Student.findOne({
 					where: {id: ids},
 					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((student)=>{
@@ -69,7 +69,7 @@ exports.getStudentInfo=function(ids){
 		}
 		else if(util.isArray(ids)){
 			//获取指定学生的信息
-			db.StudentCache.findAll({
+			db.Student.findAll({
 				where: {
 					id:ids
 				},

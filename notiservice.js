@@ -18,7 +18,7 @@ exports.getPersonalNotifications=function(id,options){
 		}
 		if(allOptions.sent){
 			//作为发送者发送出去的通知
-			db.StudentCache.findOne({where:{id:id}}).then((student)=>{
+			db.Student.findOne({where:{id:id}}).then((student)=>{
 				student.getSentNotifications({
 					attributes:{exclude:['createdAt','updatedAt']}
 				}).then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
@@ -26,7 +26,7 @@ exports.getPersonalNotifications=function(id,options){
 		}
 		else{
 			//作为接受者收到的通知
-			db.StudentCache.findOne({where:{id:id}}).then((student)=>{
+			db.Student.findOne({where:{id:id}}).then((student)=>{
 				//已查询到接受者
 				//开始读取制定信息
 				student.getReceivedNotifications({
@@ -43,7 +43,7 @@ exports.getPersonalNotifications=function(id,options){
 
 var getNotiById=exports.getNotificationById=function(id){
 	return new Promise((resolve,reject)=>{
-		db.NotificationCache.findOne({
+		db.Notification.findOne({
 			where:{id:id},
 			attributes:{exclude:['createdAt','updatedAt']}
 		}).then((notification)=>{resolve(notification);},(err)=>{reject(err);});
@@ -83,12 +83,12 @@ exports.publishNewNotification=function(newNotification){
 				if(count==0) resolve();
 			};
 
-			db.StudentCache.findOne({where:{id:newNotification['sender']}}).then((senderStudent)=>{
+			db.Student.findOne({where:{id:newNotification['sender']}}).then((senderStudent)=>{
 				notification.setSender(senderStudent);
 				check();
 			},(err)=>{reject(err);});
 			//设置接受者
-			db.StudentCache.findAll({where:{id:newNotification['receivers']}}).then((receiverStudents)=>{
+			db.Student.findAll({where:{id:newNotification['receivers']}}).then((receiverStudents)=>{
 				notification.setReceivers(receiverStudents,{read:false,star:false});
 				check();
 			},(err)=>{reject(err);});
