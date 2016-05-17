@@ -38,6 +38,20 @@ exports.getPersonalNotifications=function(id,options){
 	});
 }
 
+var getNotiById=exports.getNotificationById=function(id){
+	return new Promise((resolve,reject)=>{
+		db.NotificationCache.findOne({where:{id:id}}).then((notification)=>{resolve(notification);},(err)=>{reject(err);});
+	});
+}
+
+exports.getNotificationReadingStatusById=function(id){
+	return new Promise((resolve.reject)=>{
+		getNotiById(id).then((notification)=>{
+			notification.getReceivers({joinTableAttributes:['read','star']}).then((results)=>{resolve(results);},(err)=>{reject(err);});
+		},(err)=>{reject(err);});
+	});
+}
+
 function filterOptions(opt){
 	var options={};
 	if(opt['star']!=2){
