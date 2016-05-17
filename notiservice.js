@@ -61,6 +61,35 @@ exports.getNotificationReadingStatusById=function(id){
 	});
 }
 
+exports.pulishNewNotification=function(newNotification){
+	return new Promise((resolve,reject)=>{
+		//必须要有正文
+		if(!newNotification['content']) return reject(new Error('A notification must have content'));
+		//必须要有接收者
+		if(!newNotification['receivers']) return reject(new Error('A notification mush have at least one receiver'));
+		//必须要有发送者
+		if(!newNotification['sender']) return reject(new Error('A notification mush have a sender'));
+		//添加新通知到数据库
+		var newNoti={};
+		//仅复制所需部分进行添加
+		newNoti['title']=newNotification['title'];
+		newNoti['content']=newNotification['content'];
+		db.Notification.create(newNoti).then((notification)=>{
+			//新通知添加成功
+			//查找发送者
+			var senderPromise=db.StudentCache.findOne({where:{id:newNotification['sender']}});
+			//查找接受者
+			var receiversPromise=db.StudentCache.findAll({where:{id:newNotification['receivers']}});
+			//进行发送者和接受者的纪录的设置
+			Promise.join(senderPromise,receiversPromise,(senderStudent,receiverStudents)=>{
+				notification.setSender(senderStudent);
+				notification.setReceivers(receiverStudents,{read:false,star:false});
+			}).then(()=>{resolve();},(err)=>{reject(err);});
+			//---
+		},(err)=>{reject(err);});
+	});
+}
+
 function filterOptions(opt){
 	var options={};
 	if(opt['star']!=2){
