@@ -61,7 +61,7 @@ exports.getNotificationReadingStatusById=function(id){
 	});
 }
 
-exports.pulishNewNotification=function(newNotification){
+exports.publishNewNotification=function(newNotification){
 	return new Promise((resolve,reject)=>{
 		//必须要有正文
 		if(!newNotification['content']) return reject(new Error('A notification must have content'));
