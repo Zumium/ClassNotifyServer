@@ -76,15 +76,22 @@ exports.publishNewNotification=function(newNotification){
 		newNoti['content']=newNotification['content'];
 		db.Notification.create(newNoti).then((notification)=>{
 			//新通知添加成功
-			//查找发送者
-			var senderPromise=db.StudentCache.findOne({where:{id:newNotification['sender']}});
-			//查找接受者
-			var receiversPromise=db.StudentCache.findAll({where:{id:newNotification['receivers']}});
-			//进行发送者和接受者的纪录的设置
-			Promise.join(senderPromise,receiversPromise,(senderStudent,receiverStudents)=>{
+			//设置发送者
+			var count=2;
+			var check=()=>{
+				count--;
+				if(count==0) resolve();
+			};
+
+			var senderPromise=db.StudentCache.findOne({where:{id:newNotification['sender']}}).then((senderStudent)=>{
 				notification.setSender(senderStudent);
+				check();
+			},(err)=>{reject(err);});
+			//设置接受者
+			var receiversPromise=db.StudentCache.findAll({where:{id:newNotification['receivers']}}).then((receiverStudents)=>{
 				notification.setReceivers(receiverStudents,{read:false,star:false});
-			}).then(()=>{resolve();},(err)=>{reject(err);});
+				check();
+			},(err)=>{reject(err);});
 			//---
 		},(err)=>{reject(err);});
 	});
