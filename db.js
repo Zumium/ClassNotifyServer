@@ -70,7 +70,7 @@ var NotificationStatus=sequelize.define('notificationStatus',{
     	read: {
 		type: Sequelize.BOOLEAN,
     		field: 'ReadFlag',
-		defaultValue: true,
+		defaultValue: false,
 		allowNull: false
 	},
     	star: {
