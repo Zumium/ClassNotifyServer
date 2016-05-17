@@ -18,7 +18,9 @@ exports.getPersonalNotifications=function(id,options){
 		}
 		if(allOptions.sent){
 			//作为发送者发送出去的通知
-
+			db.StudentCache.findOne({where:{id:id}}).then((student)=>{
+				student.getSentNotifications().then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
+			},(err)=>{reject(err);});
 		}
 		else{
 			//作为接受者收到的通知
