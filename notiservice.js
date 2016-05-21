@@ -84,13 +84,11 @@ exports.publishNewNotification=function(newNotification){
 			};
 
 			db.Student.findOne({where:{id:newNotification['sender']}}).then((senderStudent)=>{
-				notification.setSender(senderStudent);
-				check();
+				notification.setSender(senderStudent).then(()=>{check();},(err)=>{reject(err);});
 			},(err)=>{reject(err);});
 			//设置接受者
 			db.Student.findAll({where:{id:newNotification['receivers']}}).then((receiverStudents)=>{
-				notification.setReceivers(receiverStudents,{read:false,star:false});
-				check();
+				notification.setReceivers(receiverStudents,{read:false,star:false}).then(()=>{check();},(err)=>{reject(err);});
 			},(err)=>{reject(err);});
 			//---
 		},(err)=>{reject(err);});
