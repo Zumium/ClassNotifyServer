@@ -11,6 +11,6 @@ passport.use(apiAuthStrategy);
 app.use(passport.initialize());
 app.use(passport.authenticate('basic',{session:false}));
 
-app.use('/',student);
+app.use('/',student.router);
 
 app.listen(8080);
