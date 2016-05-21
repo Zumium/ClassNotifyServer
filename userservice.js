@@ -1,5 +1,6 @@
 var db=require('./db');
 var Promise=require('bluebird');
+var util=require('util');
 
 //职务列表
 var characterList=['班长','团支书','副班长','宣传委员','文体委员','学习委员','生活委员','科创委员','英语委员','心理委员','同学'];
