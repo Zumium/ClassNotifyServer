@@ -1,6 +1,9 @@
 var db=require('./db');
 var Promise=require('bluebird');
 
+//职务列表
+var characterList=['班长','团支书','副班长','宣传委员','文体委员','学习委员','生活委员','科创委员','英语委员','心理委员','同学'];
+
 //登录验证
 exports.vertifyUserLogin=function(id,password){
 	return new Promise((resolve,reject)=>{
@@ -81,3 +84,39 @@ exports.getStudentInfo=function(ids){
 		else return reject(new Error('Wrong argument type'));
 	},(err)=>{reject(err);});
 }
+
+//添加新学生
+exports.addNewStudent=function(studentInfo){
+	return new Promise((resolve,reject)=>{
+		//检查参数
+		if(!studentInfo['name']){
+			//没有姓名，reject
+			var NoUserNameError=new Error('No user\'s name');
+			NoUserNameError.suggestStatusCode=400;
+			return reject(NoUserNameError);
+		}
+		if(!studentInfo['password']){
+			var NoPasswordError=new Error('No user\'s password');
+			NoPasswordError.suggestStatusCode=400;
+			return reject(NoPasswordError);
+		}
+		if(!studentInfo['id']){
+			var NoIdError=new Error('No user\'s id');
+			NoPasswordError.suggestStatusCode=400;
+			return reject(NoIdError);
+		}
+		if(!studentInfo['character'] || characterList.indexOf(studentInfo)==-1){
+			var NoSuchCharacterError=new Error('No such character');
+			NoSuchCharacterError.suggestStatusCode=400;
+			return reject(NoSuchCharacterError);
+		}
+		//验证成功
+		db.Student.create(studentInfo).then(()=>{
+			resolve();
+		},(err)=>{
+			err.suggestStatusCode=500;
+			reject(err);
+		});
+	});
+}
+
