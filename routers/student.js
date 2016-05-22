@@ -54,8 +54,9 @@ router.put('/',(req,res)=>{
 router.get('/:sid',(req,res)=>{
 	var queriedUser=req.params.sid;
 	us.getStudentInfo(queriedUser).then((student)=>{
+		if(!student) return res.status(404).json({message:'No such student'});
 		res.json(student.dataValues);
 	},(err)=>{
-		res.status(400).json({message:err.message});
+		res.status(500).json({message:err.message});
 	});
 });
