@@ -43,7 +43,7 @@ exports.getPersonalNotifications=function(id,options){
 					attributes:{exclude:['createdAt','updatedAt']},
 					through:{where:filterOptions(allOptions)},
 					order:[['publishDate','DESC']],
-					offset:allOptions['start'],
+					offset:parseInt(allOptions['start']),
 					limit: calculateLimit(allOptions)
 				}).then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
 			},(err)=>{reject(err);});
