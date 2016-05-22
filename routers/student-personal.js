@@ -1,4 +1,4 @@
-var express=('express');
+var express=require('express');
 var us=require('../userservice');
 
 var router=exports.router=express.Router();
