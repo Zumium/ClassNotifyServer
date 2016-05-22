@@ -103,7 +103,7 @@ exports.addNewStudent=function(studentInfo){
 		}
 		if(!studentInfo['id']){
 			var NoIdError=new Error('No user\'s id');
-			NoPasswordError.suggestStatusCode=400;
+			NoIdError.suggestStatusCode=400;
 			return reject(NoIdError);
 		}
 		if(!studentInfo['character'] || characterList.indexOf(studentInfo['character'])==-1){
