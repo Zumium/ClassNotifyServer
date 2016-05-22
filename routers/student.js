@@ -37,12 +37,12 @@ router.post('/',(req,res)=>{
 
 router.delete('/',(req,res)=>{
 	res.sendStatus(403);
-})
+});
 
 router.patch('/',(req,res)=>{
 	res.sendStatus(403);
-})
+});
 
 router.put('/',(req,res)=>{
 	res.sendStatus(403);
-})
+});
