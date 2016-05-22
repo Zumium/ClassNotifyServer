@@ -19,6 +19,11 @@ exports.getPersonalNotifications=function(id,options){
 		if(allOptions.sent){
 			//作为发送者发送出去的通知
 			db.Student.findOne({where:{id:id}}).then((student)=>{
+				if(!student){
+					var NoSuchUserError=new Error('No such student');
+					NoSuchUserError.suggestStatusCode=404;
+					return reject(NoSuchUserError);
+				}
 				student.getSentNotifications({
 					attributes:{exclude:['createdAt','updatedAt']}
 				}).then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
@@ -27,6 +32,11 @@ exports.getPersonalNotifications=function(id,options){
 		else{
 			//作为接受者收到的通知
 			db.Student.findOne({where:{id:id}}).then((student)=>{
+				if(!student){
+					var NoSuchUserError=new Error('No such student');
+					NoSuchUserError.suggestStatusCode=404;
+					return reject(NoSuchUserError);
+				}
 				//已查询到接受者
 				//开始读取制定信息
 				student.getReceivedNotifications({

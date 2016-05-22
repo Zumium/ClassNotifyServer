@@ -1,5 +1,6 @@
 var express=require('express');
 var us=require('../userservice');
+var ns=require('../notiservice');
 
 var router=exports.router=express.Router();
 
@@ -132,3 +133,41 @@ router.delete('/:sid',(req,res)=>{
 		res.status(500).json({message:err.message});
 	});
 });
+//=============================================
+//接下来是处理/users/:sid/notifications的中间件
+//=============================================
+router.get('/:sid/notifications',(req,res)=>{
+	var queriedUser=req.params.sid;
+	var currentUser=req.user;
+	//权限检查，不允许查看别人的通知
+	if(queriedUser!=currentUser) return res.status(403).json({message:'Not allow to query others\' notifications'});
+	ns.getPersonalNotifications(queriedUser,req.query).then((notifications)=>{
+		var results=[];
+		notifications.forEach((eachNoti)=>{
+			var t=eachNoti.get();
+			delete t['notificationStatus'];
+			results.push(t);
+		});
+		res.status(200).json(results);
+	},(err)=>{
+		if(err.suggestStatusCode==404) res.status(404).json({message:err.message});
+		else res.status(500).json({message:err.message});
+	});
+});
+
+router.post('/:sid/notifications',(req,res)=>{
+	res.sendStatus(405);
+});
+
+router.put('/:sid/notifications',(req,res)=>{
+	res.sendStatus(405);
+});
+
+router.patch('/:sid/notifications',(req,res)=>{
+	res.sendStatus(405);
+});
+
+router.delete('/:sid/notifications',(req,res)=>{
+	res.sendStatus(405);
+});
+
