@@ -36,13 +36,13 @@ router.post('/',(req,res)=>{
 });
 
 router.delete('/',(req,res)=>{
-	res.sendStatus(403);
+	res.sendStatus(405);
 });
 
 router.patch('/',(req,res)=>{
-	res.sendStatus(403);
+	res.sendStatus(405);
 });
 
 router.put('/',(req,res)=>{
-	res.sendStatus(403);
+	res.sendStatus(405);
 });
