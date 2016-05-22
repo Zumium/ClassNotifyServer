@@ -106,7 +106,7 @@ exports.addNewStudent=function(studentInfo){
 			NoPasswordError.suggestStatusCode=400;
 			return reject(NoIdError);
 		}
-		if(!studentInfo['character'] || characterList.indexOf(studentInfo)==-1){
+		if(!studentInfo['character'] || characterList.indexOf(studentInfo['character'])==-1){
 			var NoSuchCharacterError=new Error('No such character');
 			NoSuchCharacterError.suggestStatusCode=400;
 			return reject(NoSuchCharacterError);
