@@ -75,12 +75,12 @@ router.put('/:sid',(req,res)=>{
 	if(data['id']) return res.status(400).json({message:'ID can\'t be set in this situation'});
 	if(!data['name']) return res.status(400).json({message:'Must have a name'});
 	if(!us.isCharacterValid(data['character']) || !data['character']) return res.status(400).json({message:'Invalid character'});
-	if(!data['password']) return res.status(400).json({message:'Must have a password'});
+	if(data['password']) return res.status(405).json({message:'Shouldn\'t set password with PUT method'});
 	//检查完毕
 	us.getStudentInfo(queriedUser).then((student)=>{
 		if(!student) return res.status(404).json({message:'No such student'});
 		//开始修改
-		var updateAttributes=us.filtObject(['name','character','password'],data);
+		var updateAttributes=us.filtObject(['name','character'],data);
 		student.update(updateAttributes).then(()=>{
 			res.sendStatus(200);
 		},(err)=>{
