@@ -60,3 +60,75 @@ router.get('/:sid',(req,res)=>{
 		res.status(500).json({message:err.message});
 	});
 });
+
+router.post('/:sid',(req,res)=>{
+	res.sendStatus(405);
+});
+
+router.put('/:sid',(req,res)=>{
+	var queriedUser=req.params.sid;
+	var currentUser=req.user;
+	var data=req.body;
+	//检查权限，班委才能执行该操作
+	if(!us.isAdmin(currentUser)) return res.sendStatus(403);
+	//检查输入
+	if(data['id']) return res.status(400).json({message:'ID can\'t be set in this situation'});
+	if(!data['name']) return res.status(400).json({message:'Must have a name'});
+	if(!us.isCharacterValid(data['character']) || !data['character']) return res.status(400).json({message:'Invalid character'});
+	if(!data['password']) return res.status(400).json({message:'Must have a password'});
+	//检查完毕
+	us.getStudentInfo(queriedUser).then((student)=>{
+		if(!student) return res.status(404).json({message:'No such student'});
+		//开始修改
+		var updateAttributes=us.filtObject(['name','character','password'],data);
+		student.update(updateAttributes).then(()=>{
+			res.sendStatus(200);
+		},(err)=>{
+			res.status(500).json({message:err.message});
+		});
+	},(err)=>{
+		res.status(500).json({message:err.message});
+	});
+});
+
+router.patch('/:sid',(req,res)=>{
+	var queriedUser=req.params.sid;
+	var currentUser=req.user;
+	var data=req.body;
+	//run nesassery checks
+	if(data.name||data.character){
+		if(!us.isAdmin(currentUser)) return res.sendStatus(403);
+	}
+	if(data.password){
+		if(currentUser!=queriedUser) return res.sendStatus(403);
+	}
+	if(data.character && !us.isCharacterValid(data.character)) return res.status(400).json({message:'Invalid character'});
+	//start to patch
+	us.getStudentInfo(queriedUser).then((student)=>{
+		if(!student) return res.status(404).json({message:'No such student'});
+		var updateAttributes=us.filtObject(['name','character','password'],data);
+		student.update(updateAttributes).then(()=>{
+			res.sendStatus(200);
+		},(err)=>{
+			res.status(500).json({message:err.message});
+		});
+	},(err)=>{
+		res.status(500).json({message:err.message});
+	});
+});
+
+router.delete('/:sid',(req,res)=>{
+	var queriedUser=req.params.sid;
+	var currentUser=req.user;
+	if(!us.isAdmin(currentUser)) return res.sendStatus(403);
+	us.getStudentInfo(queriedUser).then((student)=>{
+		if(!student) return res.status(404).json({message:'No such student'});
+		student.destroy().then(()=>{
+			res.sendStatus(200);
+		},(err)=>{
+			res.status(500).json({message:err.message});
+		});
+	},(err)=>{
+		res.status(500).json({message:err.message});
+	});
+});
