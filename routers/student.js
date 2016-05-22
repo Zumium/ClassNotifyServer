@@ -2,8 +2,10 @@ var express=require('express');
 var us=require('../userservice');
 
 var router=exports.router=express.Router();
-//这是处理/users路径的路由中间件
 
+//====================================
+//这是处理/users路径的路由中间件
+//====================================
 router.get('/',(req,res)=>{
 	//GET方法，获取所有学生的信息
 	us.getStudentInfo('all').then((students)=>{
@@ -45,4 +47,15 @@ router.patch('/',(req,res)=>{
 
 router.put('/',(req,res)=>{
 	res.sendStatus(405);
+});
+//====================================
+//接下来是操作/users/:sid路径的中间件
+//====================================
+router.get('/:sid',(req,res)=>{
+	var queriedUser=req.params.sid;
+	us.getStudentInfo(queriedUser).then((student)=>{
+		res.json(student.dataValues);
+	},(err)=>{
+		res.status(400).json({message:err.message});
+	});
 });
