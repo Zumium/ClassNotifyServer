@@ -23,7 +23,7 @@ router.post('/',(req,res)=>{
 	us.isAdmin(req.user).then((result)=>{
 		//非班委用户，禁止该操作
 		if(!result) return res.sendStatus(403);
-		us.addNewStudent(JSON.parse(req.body)).then(()=>{
+		us.addNewStudent(req.body).then(()=>{
 			res.sendStatus(200);
 		},(err)=>{
 			if(err.suggestStatusCode==500) return res.sendStatus(500);
