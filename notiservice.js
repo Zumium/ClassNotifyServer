@@ -105,6 +105,14 @@ exports.publishNewNotification=function(newNotification){
 	});
 }
 
+exports.getAllNotifications=function(){
+	return new Promise((resolve,reject)=>{
+		db.Notification.findAll().then((notis)=>{
+			resolve(notis);
+		},(err)=>{reject(err);});
+	});
+}
+
 function filterOptions(opt){
 	var options={};
 	if(opt['star']!=2){
