@@ -81,11 +81,11 @@ exports.getNotificationReadingStatusById=function(id){
 exports.publishNewNotification=function(newNotification){
 	return new Promise((resolve,reject)=>{
 		//必须要有正文
-		if(!newNotification['content']) return reject(new Error('A notification must have content'));
+		//if(!newNotification['content']) return reject(new Error('A notification must have content'));
 		//必须要有接收者
-		if(!newNotification['receivers']) return reject(new Error('A notification mush have at least one receiver'));
+		//if(!newNotification['receivers']) return reject(new Error('A notification mush have at least one receiver'));
 		//必须要有发送者
-		if(!newNotification['sender']) return reject(new Error('A notification mush have a sender'));
+		//if(!newNotification['sender']) return reject(new Error('A notification mush have a sender'));
 		//添加新通知到数据库
 		var newNoti={};
 		//仅复制所需部分进行添加
