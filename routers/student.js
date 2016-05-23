@@ -142,15 +142,20 @@ router.patch('/:sid',(req,res)=>{
 router.delete('/:sid',(req,res)=>{
 	var queriedUser=req.params.sid;
 	var currentUser=req.user;
-	if(!us.isAdmin(currentUser)) return res.sendStatus(403);
-	us.getStudentInfo(queriedUser).then((student)=>{
-		if(!student) return res.status(404).json({message:'No such student'});
-		student.destroy().then(()=>{
-			res.sendStatus(200);
+	//if(!us.isAdmin(currentUser)) return res.sendStatus(403);
+	Promise.join(us.isAdmin(currentUser),(isAdmin)=>{
+		if(!isAdmin) return res.status(403).json({message:'Not permitted'});
+		us.getStudentInfo(queriedUser).then((student)=>{
+			if(!student) return res.status(404).json({message:'No such student'});
+			student.destroy().then(()=>{
+				res.sendStatus(200);
+			},(err)=>{
+				res.status(500).json({message:err.message});
+			});
 		},(err)=>{
 			res.status(500).json({message:err.message});
 		});
-	},(err)=>{
+	}).then(null,(err)=>{
 		res.status(500).json({message:err.message});
 	});
 });
@@ -161,18 +166,24 @@ router.get('/:sid/notifications',(req,res)=>{
 	var queriedUser=req.params.sid;
 	var currentUser=req.user;
 	//权限检查，不允许查看别人的通知
-	if(queriedUser!=currentUser) return res.status(403).json({message:'Not allow to query others\' notifications'});
-	ns.getPersonalNotifications(queriedUser,req.query).then((notifications)=>{
-		var results=[];
-		notifications.forEach((eachNoti)=>{
-			var t=eachNoti.get();
-			delete t['notificationStatus'];
-			results.push(t);
+	//if(queriedUser!=currentUser) return res.status(403).json({message:'Not allow to query others\' notifications'});
+	Promise.join(ps.isOperateOnSelf(req,queriedUser),(isSelf)=>{
+		//权限检查，不允许查看别人的通知
+		if(!isSelf) return res.status(403).json({message:'Not permitted'});
+		ns.getPersonalNotifications(queriedUser,req.query).then((notifications)=>{
+			var results=[];
+			notifications.forEach((eachNoti)=>{
+				var t=eachNoti.get();
+				delete t['notificationStatus'];
+				results.push(t);
+			});
+			res.status(200).json(results);
+		},(err)=>{
+			if(err.suggestStatusCode==404) res.status(404).json({message:err.message});
+			else res.status(500).json({message:err.message});
 		});
-		res.status(200).json(results);
-	},(err)=>{
-		if(err.suggestStatusCode==404) res.status(404).json({message:err.message});
-		else res.status(500).json({message:err.message});
+	}).then(null,(err)=>{
+		res.status.json({message:err.message});
 	});
 });
 
