@@ -40,6 +40,7 @@ var Notification=sequelize.define('notification',{
 	},
     	title: {
 		type: Sequelize.STRING,
+		defaultValue: '(无)',
     		field: 'NtfTitle'
 	},
     	content: {
