@@ -39,9 +39,24 @@ router.post('/',(req,res)=>{
 	});
 });
 
+router.put('/',(req,res)=>{
+	res.sendStatus(405);
+});
+
+router.patch('/',(req,res)=>{
+	res.sendStatus(405);
+});
+
+router.delete('/',(req,res)=>{
+	res.sendStatus(405);
+});
+
+//==============================================
+
 router.get('/:nid',(req,res)=>{
 	var queriedNotification=req.params.nid;
 	ns.getNotificationById(queriedNotification).then((notification)=>{
+		if(!notification) return res.status(404).json({message:'No such notification'});
 		res.status(200).json(notification.get());
 	},(err)=>{
 		if(err.suggestStatusCode!=500)
@@ -49,4 +64,12 @@ router.get('/:nid',(req,res)=>{
 		else
 			res.status(500),json({message:err.message});
 	});
+});
+
+router.post('/:nid',(req,res)=>{
+	res.sendStatus(405);
+});
+
+router.delete('/:nid',(req,res)=>{
+	
 });
