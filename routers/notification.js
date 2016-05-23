@@ -16,3 +16,12 @@ router.get('/',(req,res)=>{
 		res.status(500).json({message:err.message});
 	});
 });
+
+router.get('/:nid',(req,res)=>{
+	var queriedNotification=req.params.nid;
+	ns.getNotificationById(queriedNotification).then((notification)=>{
+		res.status(200).json(notification.get());
+	},(err)=>{
+		res.status(500),json({message:err.message});
+	});
+});
