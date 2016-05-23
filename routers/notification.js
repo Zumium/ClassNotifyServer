@@ -3,6 +3,7 @@ var ns=require('../notiservice');
 var express=require('express');
 var Promise=require('bluebird');
 var ps=require('../pmsservice');
+var util=require('util');
 
 var router=exports.router=express.Router();
 
