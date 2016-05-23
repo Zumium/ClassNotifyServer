@@ -107,7 +107,7 @@ exports.publishNewNotification=function(newNotification){
 
 exports.getAllNotifications=function(){
 	return new Promise((resolve,reject)=>{
-		db.Notification.findAll().then((notis)=>{
+		db.Notification.findAll({attributes:{exclude:['createdAt','updatedAt']}}).then((notis)=>{
 			resolve(notis);
 		},(err)=>{reject(err);});
 	});
