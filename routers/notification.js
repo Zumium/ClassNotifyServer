@@ -71,5 +71,21 @@ router.post('/:nid',(req,res)=>{
 });
 
 router.delete('/:nid',(req,res)=>{
-	
+	var currentUser=req.user;
+	var queriedNotification=req.params.nid;
+	Promise.join(us.isAdmin(currentUser),(isAdmin)=>{
+		if(!isAdmin) return res.status(403).json({message:'Not permitted'});
+		ns.getNotificationById(queriedNotification).then((notification)=>{
+			if(!notification) return res.status(404).json({message:'No such notification'});
+			notification.destroy().then(()=>{
+				res.sendStatus(200);
+			},(err)=>{
+				res.status(500).json({message:err.message});
+			});
+		},(err)=>{
+			res.status(500).json({message:err.message});
+		});
+	}).then(null,(err)=>{
+		res.status(500).json({message:err.message});
+	});
 });
