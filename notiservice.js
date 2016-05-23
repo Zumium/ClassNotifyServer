@@ -56,7 +56,14 @@ var getNotiById=exports.getNotificationById=function(id){
 		db.Notification.findOne({
 			where:{id:id},
 			attributes:{exclude:['createdAt','updatedAt']}
-		}).then((notification)=>{resolve(notification);},(err)=>{reject(err);});
+		}).then((notification)=>{
+			if(!notification){
+				var NoSuchNotificationError=new Error('No such notification');
+				NoSuchNotificationError.suggestStatusCode=404;
+				return reject(NoSuchNotificationError);
+			}
+			resolve(notification);
+		},(err)=>{reject(err);});
 	});
 }
 
