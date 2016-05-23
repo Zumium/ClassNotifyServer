@@ -25,7 +25,7 @@ router.post('/',(req,res)=>{
 	Promise.join(us.isAdmin(currentUser),ps.checkAttributes(['content','receivers'],null,data),(isAdmin,isGoodNoti)=>{
 		if(!isAdmin) return res.status(403).json({message:'Not permitted'});
 		if(!isGoodNoti) return res.status(400).json({message:'Something wrong within new notification information'});
-		if(!util.isArray(data.receivers)) return res.status(400).json({'Receivers should be an array'});
+		if(!util.isArray(data.receivers)) return res.status(400).json({message:'Receivers should be an array'});
 		data=us.filtObject(['title','content','receivers'],data);
 		data['sender']=currentUser;
 		ns.publishNewNotification(data).then(()=>{
