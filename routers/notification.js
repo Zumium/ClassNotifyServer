@@ -23,7 +23,7 @@ router.get('/:nid',(req,res)=>{
 		res.status(200).json(notification.get());
 	},(err)=>{
 		if(err.suggestStatusCode!=500)
-			err.status(err.suggestStatusCode).json({message:err.message});
+			res.status(err.suggestStatusCode).json({message:err.message});
 		else
 			res.status(500),json({message:err.message});
 	});
