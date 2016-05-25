@@ -39,18 +39,6 @@ router.post('/',(req,res)=>{
 	});
 });
 
-router.put('/',(req,res)=>{
-	res.sendStatus(405);
-});
-
-router.patch('/',(req,res)=>{
-	res.sendStatus(405);
-});
-
-router.delete('/',(req,res)=>{
-	res.sendStatus(405);
-});
-
 //==============================================
 
 router.get('/:nid',(req,res)=>{
@@ -64,10 +52,6 @@ router.get('/:nid',(req,res)=>{
 		else
 			res.status(500),json({message:err.message});
 	});
-});
-
-router.post('/:nid',(req,res)=>{
-	res.sendStatus(405);
 });
 
 router.delete('/:nid',(req,res)=>{
@@ -89,3 +73,4 @@ router.delete('/:nid',(req,res)=>{
 		res.status(500).json({message:err.message});
 	});
 });
+//==============================================

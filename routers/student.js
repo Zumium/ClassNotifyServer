@@ -40,17 +40,6 @@ router.post('/',(req,res)=>{
 	});
 });
 
-router.delete('/',(req,res)=>{
-	res.sendStatus(405);
-});
-
-router.patch('/',(req,res)=>{
-	res.sendStatus(405);
-});
-
-router.put('/',(req,res)=>{
-	res.sendStatus(405);
-});
 //====================================
 //接下来是操作/users/:sid路径的中间件
 //====================================
@@ -62,10 +51,6 @@ router.get('/:sid',(req,res)=>{
 	},(err)=>{
 		res.status(500).json({message:err.message});
 	});
-});
-
-router.post('/:sid',(req,res)=>{
-	res.sendStatus(405);
 });
 
 router.put('/:sid',(req,res)=>{
@@ -185,21 +170,5 @@ router.get('/:sid/notifications',(req,res)=>{
 	}).then(null,(err)=>{
 		res.status.json({message:err.message});
 	});
-});
-
-router.post('/:sid/notifications',(req,res)=>{
-	res.sendStatus(405);
-});
-
-router.put('/:sid/notifications',(req,res)=>{
-	res.sendStatus(405);
-});
-
-router.patch('/:sid/notifications',(req,res)=>{
-	res.sendStatus(405);
-});
-
-router.delete('/:sid/notifications',(req,res)=>{
-	res.sendStatus(405);
 });
 
