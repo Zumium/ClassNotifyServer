@@ -149,10 +149,8 @@ router.patch('/:nid/status/:sid',(req,res)=>{
 
 		ns.getNotificationReadingStatusById(queriedNotification,queriedStudent).then((theStatus)=>{
 			data=us.filtObject(['star','read'],data);
-			var statusStorage=theStatus.get('notificationStatus');
-			for (var key in data)
-				statusStorage.set(key,data[key]);
-			theStatus.save().then(()=>{
+			//var statusStorage=theStatus.get('notificationStatus');
+			theStatus.update({joinTableAttributes:data}).then(()=>{
 				res.sendStatus(200);
 			},(err)=>{
 				res.status(500).json({message:err.message});
