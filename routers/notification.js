@@ -108,7 +108,7 @@ router.get('/:nid/status/:sid',(req,res)=>{
 			ns.getNotificationReadingStatusById(queriedNotification,currentUser).then((theStatus)=>{
 				mainPart=theStatus.get();
 				statusPart=theStatus.get('notificationStatus').get();
-				for(var key:statusPart)
+				for(var key in statusPart)
 					mainPart[key]=statusPart[key];
 				delete mainPart['notificationStatus'];
 				res.status(200).json(mainPart);
