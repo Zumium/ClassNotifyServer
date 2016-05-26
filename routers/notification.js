@@ -83,10 +83,11 @@ router.get('/:nid/status',(req,res)=>{
 			var results=[];
 			statuses.forEach((eachStatus)=>{
 				var mainPart=eachStatus.get();
-				delete mainPart['notificationStatus'];
+				var statusPart=mainPart['notificationStatus'];
 				//去除了加星信息，对于通知的发送者来说不应该知道该通知的阅读者是否加星
-				mainPart['read']=eachStatus.get('notificationStatus').get('read');
-				results.push(studentPart);
+				delete mainPart['notificationStatus'];
+				mainPart['read']=statusPart['read'];
+				results.push(mainPart);
 			});
 			res.status(200).json(results);
 		},(err)=>{
