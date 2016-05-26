@@ -151,6 +151,9 @@ router.patch('/:nid/status/:sid',(req,res)=>{
 		ns.getNotificationReadingStatusById(queriedNotification,queriedStudent).then((theStatus)=>{
 			data=us.filtObject(['star','read'],data);
 			var statusStorage=theStatus.get('notificationStatus');
+
+			if(data.read==false) return res.status(400).json({message:'Can\'t set to unread unless you can erase your memory...'});
+
 			statusStorage.update(data).then(()=>{
 				res.sendStatus(200);
 			},(err)=>{
