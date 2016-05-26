@@ -143,7 +143,7 @@ exports.isCharacterValid=function(character){
 exports.filtObject=function(keys,obj){
 	var filtResult={};
 	keys.forEach((eachKey)=>{
-		if(obj[eachKey]) filtResult[eachKey]=obj[eachKey];
+		if(obj[eachKey]!=undefined) filtResult[eachKey]=obj[eachKey];
 	});
 	return filtResult;
 }
