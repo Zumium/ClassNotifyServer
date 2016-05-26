@@ -74,3 +74,26 @@ router.delete('/:nid',(req,res)=>{
 	});
 });
 //==============================================
+router.get('/:nid/status',(req,res)=>{
+	var queriedNotification=req.params.nid;
+	var currentUser=req.user;
+	Promise.join(ps.isSender(queriedNotification,currentUser),(isSender)=>{
+		if(!isSender) return res.status(403).json({message:'Not permitted'});
+		ns.getNotificationReadingStatusById(queriedNotification).then((statuses)=>{
+			var results=[];
+			statuses.forEach((eachStatus)=>{
+				var mainPart=eachStatus.get();
+				delete mainPart['notificationStatus'];
+				//去除了加星信息，对于通知的发送者来说不应该知道该通知的阅读者是否加星
+				mainPart['read']=eachStatus.get('notificationStatus').get('read');
+				results.push(studentPart);
+			});
+			res.status(200).json(results);
+		},(err)=>{
+			res.status(500).json({message:err.message});
+		});
+	}).then(null,(err)=>{
+		if(err.suggestStatusCode) res.status(err.suggestStatusCode).json({message:err.message});
+		else res.status(500).json({message:err.message});
+	});
+});
