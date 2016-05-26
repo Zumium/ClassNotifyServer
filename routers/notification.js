@@ -98,3 +98,42 @@ router.get('/:nid/status',(req,res)=>{
 		else res.status(500).json({message:err.message});
 	});
 });
+//===================================================================
+router.get('/:nid/status/:sid',(req,res)=>{
+	var queriedNotification=req.params.nid;
+	var queriedStudent=req.params.sid;
+	var currentUser=req.user;
+	Promise.join(ps.isOperateOnSelf(req,queriedStudent),ps.isSender(queriedNotification,currentUser),(isSelf,isSender)=>{
+		if(isSelf){
+			ns.getNotificationReadingStatusById(queriedNotification,currentUser).then((theStatus)=>{
+				mainPart=theStatus.get();
+				statusPart=theStatus.get('notificationStatus').get();
+				for(var key:statusPart)
+					mainPart[key]=statusPart[key];
+				delete mainPart['notificationStatus'];
+				res.status(200).json(mainPart);
+			},(err)=>{
+				if(err.suggestStatusCode) res.status(err.suggestStatusCode).json({message:err.message});
+				else res.status(500).json({message:err.message});
+			});
+		}
+		else if(isSender){
+			ns.getNotificationReadingStatusById(queriedNotification,queriedStudent).then((theStatus)=>{
+				mainPart=theStatus.get();
+				statusPart=theStatus.get('notificationStatus').get();
+				mainPart['read']=statusPart['read'];
+				delete mainPart['notificationStatus'];
+				res.status(200).json(mainPart);
+			},(err)=>{
+				if(err.suggestStatusCode) res.status(err.suggestStatusCode).json({message:err.message});
+				else res.status(500).json({message:err.message});
+			});
+		}
+		else{
+			res.status(403).json({message:'Not permitted'});
+		}
+	}).then(null,(err)=>{
+		if(err.suggestStatusCode) res.status(err.suggestStatusCode).json({message:err.message});
+		else res.status(500).json({message:err.message});
+	});
+});
