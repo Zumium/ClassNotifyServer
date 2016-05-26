@@ -72,7 +72,7 @@ exports.getNotificationReadingStatusById=function(id,sid){
 		getNotiById(id).then((notification)=>{
 			notification.getReceivers({
 				attributes:{exclude:['password','createdAt','updatedAt']},
-				joinTableAttributes:['read','star']
+				joinTableAttributes:['id','read','star']
 			}).then((results)=>{
 				if(sid){
 					var searchResult=results.find((each)=>{
