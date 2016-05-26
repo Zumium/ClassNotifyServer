@@ -67,13 +67,26 @@ var getNotiById=exports.getNotificationById=function(id){
 	});
 }
 
-exports.getNotificationReadingStatusById=function(id){
+exports.getNotificationReadingStatusById=function(id,sid){
 	return new Promise((resolve,reject)=>{
 		getNotiById(id).then((notification)=>{
 			notification.getReceivers({
 				attributes:{exclude:['password','createdAt','updatedAt']},
 				joinTableAttributes:['read','star']
-			}).then((results)=>{resolve(results);},(err)=>{reject(err);});
+			}).then((results)=>{
+				if(sid){
+					var searchResult=results.find((each)=>{
+						return sid==each.get('id');
+					});
+					if(searchResult) resolve(searchResult);
+					else {
+						var NoSuchReceiverError=new Error('This notification doesn\'t have such a receiver');
+						NoSuchReceiverError.suggestStatusCode=404;
+						reject(NoSuchReceiverError);
+					}
+				}
+				else resolve(results);
+			},(err)=>{reject(err);});
 		},(err)=>{reject(err);});
 	});
 }
