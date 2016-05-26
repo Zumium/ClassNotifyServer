@@ -108,6 +108,7 @@ router.get('/:nid/status/:sid',(req,res)=>{
 			ns.getNotificationReadingStatusById(queriedNotification,currentUser).then((theStatus)=>{
 				mainPart=theStatus.get();
 				statusPart=theStatus.get('notificationStatus').get();
+				statusPart=us.filtObject(['read','star'],statusPart);
 				for(var key in statusPart)
 					mainPart[key]=statusPart[key];
 				delete mainPart['notificationStatus'];
@@ -149,8 +150,8 @@ router.patch('/:nid/status/:sid',(req,res)=>{
 
 		ns.getNotificationReadingStatusById(queriedNotification,queriedStudent).then((theStatus)=>{
 			data=us.filtObject(['star','read'],data);
-			//var statusStorage=theStatus.get('notificationStatus');
-			theStatus.update({joinTableAttributes:data}).then(()=>{
+			var statusStorage=theStatus.get('notificationStatus');
+			statusStorage.update(data).then(()=>{
 				res.sendStatus(200);
 			},(err)=>{
 				res.status(500).json({message:err.message});
