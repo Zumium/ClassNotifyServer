@@ -137,3 +137,29 @@ router.get('/:nid/status/:sid',(req,res)=>{
 		else res.status(500).json({message:err.message});
 	});
 });
+
+router.patch('/:nid/status/:sid',(req,res)=>{
+	var queriedStudent=req.params.sid;
+	var queriedNotification=req.params.nid;
+	var currentUser=req.user;
+	var data=req.body;
+	Promise.join(ps.isOperateOnSelf(req,queriedStudent),ps.checkAttributes(['star'],null,data),ps.checkAttributes(['read'],null,data),(isSelf,hasStar,hasRead)=>{
+		if(!isSelf) return res.status(403).json({message:'Not permitted'});
+		if(!hasStar && !hasRead) return res.status(400).json({message:'Empty request are not allowed'});
+
+		ns.getNotificationReadingStatusById(queriedNotification,queriedStudent).then((theStatus)=>{
+			data=us.filtObject(['star','read'],data);
+			theStatus.get('notificationStatus').update(data).then(()=>{
+				res.sendStatus(200);
+			},(err)=>{
+				res.status(500).json({message:err.message});
+			});
+		},(err)=>{
+			if(err.suggestStatusCode) res.status(err.suggestStatusCode).json({message:err.message});
+			else res.status(500).json({message:err.message});
+		});
+	}).then(null,(err)=>{
+		if(err.suggestStatusCode) res.status(err.suggestStatusCode).json({message:err.message});
+		else res.status(500).json({message:err.message});
+	});
+});
