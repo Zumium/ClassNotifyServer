@@ -58,6 +58,11 @@ exports.getStudentInfo=function(ids){
 				db.Student.findAll({
 					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((students)=>{
+					if(!students){
+						var NoSuchStudentError=new Error('No such student');
+						NoSuchStudentError.suggestStatusCode=404;
+						return reject(NoSuchStudentError);
+					}
 					resolve(students);
 				},(err)=>{reject(err);});
 			}
@@ -67,6 +72,11 @@ exports.getStudentInfo=function(ids){
 					where: {id: ids},
 					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((student)=>{
+					if(!student){
+						var NoSuchStudentError=new Error('No such student');
+						NoSuchStudentError.suggestStatusCode=404;
+						return reject(NoSuchStudentError);
+					}
 					resolve(student);
 				},(err)=>{reject(err);});
 			}
@@ -79,6 +89,11 @@ exports.getStudentInfo=function(ids){
 				},
 				attributes:{exclude:['password','createdAt','updatedAt']}
 			}).then((students)=>{
+				if(!students){
+					var NoSuchStudentError=new Error('No such student');
+					NoSuchStudentError.suggestStatusCode=404;
+					return reject(NoSuchStudentError);
+				}
 				resolve(students);
 			},(err)=>{reject(err);});
 		}
