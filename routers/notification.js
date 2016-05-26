@@ -151,7 +151,7 @@ router.patch('/:nid/status/:sid',(req,res)=>{
 			data=us.filtObject(['star','read'],data);
 			var statusStorage=theStatus.get('notificationStatus');
 			for (var key in data)
-				statusStorage[key]=data[key];
+				statusStorage.set(key,data[key]);
 			theStatus.save().then(()=>{
 				res.sendStatus(200);
 			},(err)=>{
