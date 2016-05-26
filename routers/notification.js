@@ -149,7 +149,10 @@ router.patch('/:nid/status/:sid',(req,res)=>{
 
 		ns.getNotificationReadingStatusById(queriedNotification,queriedStudent).then((theStatus)=>{
 			data=us.filtObject(['star','read'],data);
-			theStatus.get('notificationStatus').update(data).then(()=>{
+			var statusStorage=theStatus.get('notificationStatus');
+			for (var key in data)
+				statusStorage[key]=data[key];
+			theStatus.save().then(()=>{
 				res.sendStatus(200);
 			},(err)=>{
 				res.status(500).json({message:err.message});
