@@ -4,6 +4,7 @@ var ns=require('../services/notiservice');
 var Promise=require('bluebird');
 var ps=require('../services/pmsservice');
 var genError=require('../tools/gene-error');
+var filtObject=require('../tools/filt-object');
 
 var router=exports.router=express.Router();
 
@@ -66,7 +67,7 @@ router.put('/:sid',(req,res,next)=>{
 		us.getStudentInfo(queriedUser).then((student)=>{
 			if(!student) return next(genError(404,'No such student'));
 			//开始修改
-			var updateAttributes=us.filtObject(['name','character'],data);
+			var updateAttributes=filtObject(['name','character'],data);
 			student.update(updateAttributes).then(()=>{
 				res.sendStatus(200);
 			},(err)=>{
@@ -96,7 +97,7 @@ router.patch('/:sid',(req,res,next)=>{
 		//start to patch
 		us.getStudentInfo(queriedUser).then((student)=>{
 			if(!student) next(genError(404,'No such student'));
-			var updateAttributes=us.filtObject(['name','character','password'],data);
+			var updateAttributes=filtObject(['name','character','password'],data);
 			student.update(updateAttributes).then(()=>{
 				res.sendStatus(200);
 			},(err)=>{

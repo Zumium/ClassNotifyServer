@@ -140,10 +140,3 @@ exports.isCharacterValid=function(character){
 	return characterList.indexOf(character)!=-1;
 }
 
-exports.filtObject=function(keys,obj){
-	var filtResult={};
-	keys.forEach((eachKey)=>{
-		if(obj[eachKey]!=undefined) filtResult[eachKey]=obj[eachKey];
-	});
-	return filtResult;
-}
