@@ -2,6 +2,7 @@ var express=require('express');
 var passport=require('passport');
 var apiAuthStrategy=require('./components/api-auth');
 var bodyParser=require('body-parser');
+var errorHandler=require('./midwares/error-handler');
 
 var app=express();
 
@@ -16,5 +17,7 @@ app.use(bodyParser.json());
 
 app.use('/users',student.router);
 app.use('/notifications',notification.router);
+
+app.use(errorHandler);
 
 app.listen(7000);
