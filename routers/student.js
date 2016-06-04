@@ -133,7 +133,7 @@ router.delete('/:sid',(req,res,next)=>{
 //=============================================
 //接下来是处理/users/:sid/notifications的中间件
 //=============================================
-router.get('/:sid/notifications',(req,res)=>{
+router.get('/:sid/notifications',(req,res,next)=>{
 	var queriedUser=req.params.sid;
 	var currentUser=req.user;
 	//权限检查，不允许查看别人的通知
