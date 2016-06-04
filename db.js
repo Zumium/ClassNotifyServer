@@ -105,8 +105,8 @@ var NotificationStatus=sequelize.define('notificationStatus',{
 Notification.belongsToMany(Student,{as:'Receivers',through:NotificationStatus,constraints:false});
 Student.belongsToMany(Notification,{as:'ReceivedNotifications',through:NotificationStatus,constraints:false});
 
-Notification.belongsTo(Student,{as:'Sender',constraints:false});
-Student.hasMany(Notification,{as:'SentNotifications',constraints:false});
+Notification.belongsTo(Student,{as:'Sender'});
+Student.hasMany(Notification,{as:'SentNotifications'});
 
 //exports all models
 exports.Student=Student;
