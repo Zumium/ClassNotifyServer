@@ -53,6 +53,14 @@ var Notification=sequelize.define('notification',{
     		field: 'NtfPublishDate',
     		defaultValue: new Date(),
     		allowNull: false
+	},
+	sender: {
+		type: Sequelize.STRING,
+		field: 'SenderID',
+		references: {
+			model: Student,
+			key: 'id'
+		}
 	}
 },{
 	charset: 'utf8'
@@ -97,8 +105,8 @@ var NotificationStatus=sequelize.define('notificationStatus',{
 Notification.belongsToMany(Student,{as:'Receivers',through:NotificationStatus,constraints:false});
 Student.belongsToMany(Notification,{as:'ReceivedNotifications',through:NotificationStatus,constraints:false});
 
-Notification.belongsTo(Student,{as:'Sender',foreignKey:'SenderID',constraints:false});
-Student.hasMany(Notification,{as:'SentNotifications',foreignKey:'SenderID',constraints:false});
+Notification.belongsTo(Student,{as:'Sender',constraints:false});
+Student.hasMany(Notification,{as:'SentNotifications',constraints:false});
 
 //exports all models
 exports.Student=Student;
