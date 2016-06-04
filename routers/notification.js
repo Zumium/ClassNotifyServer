@@ -4,8 +4,8 @@ var express=require('express');
 var Promise=require('bluebird');
 var ps=require('../services/pmsservice');
 var util=require('util');
-var filtObject=require('./tools/filt-object');
-var genError=require('./tools/gene-error');
+var filtObject=require('../tools/filt-object');
+var genError=require('../tools/gene-error');
 
 var router=exports.router=express.Router();
 
