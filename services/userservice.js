@@ -1,4 +1,4 @@
-var db=require('./db');
+var db=require('../repositories/db');
 var Promise=require('bluebird');
 var util=require('util');
 

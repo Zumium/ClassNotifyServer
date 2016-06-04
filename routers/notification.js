@@ -1,8 +1,8 @@
-var us=require('../userservice');
-var ns=require('../notiservice');
+var us=require('../services/userservice');
+var ns=require('../services/notiservice');
 var express=require('express');
 var Promise=require('bluebird');
-var ps=require('../pmsservice');
+var ps=require('../services/pmsservice');
 var util=require('util');
 
 var router=exports.router=express.Router();

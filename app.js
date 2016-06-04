@@ -1,6 +1,6 @@
 var express=require('express');
 var passport=require('passport');
-var apiAuthStrategy=require('./api-auth');
+var apiAuthStrategy=require('./components/api-auth');
 var bodyParser=require('body-parser');
 
 var app=express();
