@@ -17,4 +17,4 @@ app.use(bodyParser.json());
 app.use('/users',student.router);
 app.use('/notifications',notification.router);
 
-app.listen(8000);
+app.listen(7000);
