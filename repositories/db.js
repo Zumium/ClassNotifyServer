@@ -3,7 +3,7 @@ var Sequelize=require('sequelize');
 var Promise=require('bluebird');
 
 //Connection to the DB
-var sequelize=new Sequelize('mariadb://root:zhy1996martin@localhost/ClassNotify',{
+var sequelize=new Sequelize('mariadb://martin:123456@mariadb/ClassNotify',{
 	logging:false
 });
 

@@ -2,7 +2,8 @@ var redis=require('redis');
 var io=require('socket.io');
 var app=require('../app');
 
-var redisServer=redis.createClient();
+const redisOptions={host:'redis'};
+var redisServer=redis.createClient(redisOptions);
 var pushServer=io(app.server);
 
 exports.pushNewNotification=function(id){
@@ -10,7 +11,7 @@ exports.pushNewNotification=function(id){
 }
 
 pushServer.on('connection',(client)=>{
-	var redisClient=redis.createClient();
+	var redisClient=redis.createClient(redisOptions);
 	redisClient.subscribe('NewNotification');
 
 	redisClient.on('message',(newNotiStr)=>{
