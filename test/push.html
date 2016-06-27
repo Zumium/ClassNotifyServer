@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8">
+        <title>推送接收测试</title>
+    </head>
+    <body>
+	<div id="displayField">
+ 	    <p>这里显示测试结果</p>
+    	</div>
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	<script>
+	    var socket = io.connect('http://192.168.56.102:7000');
+	    var displayer=document.getElementById("displayField");
+	    socket.on('newNotification', function (data) {
+		    var newNoti=document.createElement("p");
+		    newNoti.textContent=data['id'];
+		    displayer.appendChild(newNoti);
+	    });
+	</script>
+    </body>
+</html>

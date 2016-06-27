@@ -3,6 +3,7 @@ var passport=require('passport');
 var apiAuthStrategy=require('./components/api-auth');
 var bodyParser=require('body-parser');
 var errorHandler=require('./midwares/error-handler');
+var http=require('http');
 
 var app=express();
 
@@ -20,4 +21,5 @@ app.use('/notifications',notification.router);
 
 app.use(errorHandler);
 
-app.listen(7000);
+var server=exports.server=http.createServer(app);
+server.listen(7000);

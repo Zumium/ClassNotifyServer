@@ -1,5 +1,6 @@
 var db=require('../repositories/db');
 var Promise=require('bluebird');
+var pushService=require('./pushservice');
 
 //读取个人通知
 exports.getPersonalNotifications=function(id,options){
@@ -106,13 +107,17 @@ exports.publishNewNotification=function(newNotification){
 		newNoti['content']=newNotification['content'];
 		db.Notification.create(newNoti).then((notification)=>{
 			//新通知添加成功
-			//设置发送者
 			var count=2;
 			var check=()=>{
 				count--;
-				if(count==0) resolve();
+				if(count==0){
+					//推送新通知
+					pushService.pushNewNotification(notification.get('id'));
+					resolve();
+				}
 			};
 
+			//设置发送者
 			db.Student.findOne({where:{id:newNotification['sender']}}).then((senderStudent)=>{
 				notification.setSender(senderStudent).then(()=>{check();},(err)=>{reject(err);});
 			},(err)=>{reject(err);});
