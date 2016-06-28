@@ -18,7 +18,7 @@ exports.init=function(server){
 		redisClient.subscribe('NewNotification');
 	
 		//when new message has come
-		redisClient.on('message',(newNotiStr)=>{
+		redisClient.on('message',(channelName,newNotiStr)=>{
 			client.emit('newNotification',JSON.parse(newNotiStr));
 		});
 	
