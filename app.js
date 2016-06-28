@@ -4,6 +4,7 @@ var apiAuthStrategy=require('./components/api-auth');
 var bodyParser=require('body-parser');
 var errorHandler=require('./midwares/error-handler');
 var http=require('http');
+var push=require('./services/pushservice');
 
 var app=express();
 
@@ -21,5 +22,6 @@ app.use('/notifications',notification.router);
 
 app.use(errorHandler);
 
-var server=exports.server=http.createServer(app);
+var server=http.createServer(app);
+push.init(server);
 server.listen(7000);
