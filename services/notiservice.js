@@ -112,7 +112,7 @@ exports.publishNewNotification=function(newNotification){
 				count--;
 				if(count==0){
 					//推送新通知
-					pushService.pushNewNotification(notification.get('id'));
+					pushService.pushNewNotification(notification);
 					resolve();
 				}
 			};
