@@ -9,7 +9,7 @@ function clientOnline(id,client){
 	client.userID=id;
 }
 function clientOffline(client){
-	del onlineClients[client.userID];
+	onlineClients[client.userID]=null;
 }
 function clientEmit(ids,eventName,data){
 	ids.forEach((id)=>{
