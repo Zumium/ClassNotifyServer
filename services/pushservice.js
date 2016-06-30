@@ -1,5 +1,5 @@
 var io=require('socket.io');
-var ns=require('./userservice');
+var us=require('./userservice');
 
 var pushServer=null;
 var onlineClients={};
