@@ -29,7 +29,7 @@ function setLoginTimeout(client){
 	setTimeout(()=>{
 		if(!client.loggedin){ //if client isn't logged in yet
 			client.emit('authorize-error',new Error('Login timeout'));
-			client.destroy();
+			client.disconnect();
 		}
 	},LOGIN_TIMELIMIT);
 }
