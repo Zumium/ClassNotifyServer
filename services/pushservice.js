@@ -28,7 +28,7 @@ function setLoginTimeout(client){
 	client.loggedin=false;
 	setTimeout(()=>{
 		if(!client.loggedin){ //if client isn't logged in yet
-			client.emit('authorize-error',{err:new Error('Login timeout')});
+			client.emit('authorize-error',{message:'Login timeout'});
 			client.disconnect();
 		}
 	},LOGIN_TIMELIMIT);
@@ -53,14 +53,14 @@ exports.init=function(server){
 		client.on('authorize',(id,password)=>{
 			us.vertifyUserLogin(id,password).then((isCorrect)=>{
 				if(!isCorrect){ //authorization failed
-					client.emit('authorize-error',new Error('username or password wrong'));
+					client.emit('authorize-error',{message:'username or password wrong'});
 					return;
 				}
 				try{
 					clientOnline(id,client);
 				}
 				catch(err){
-					client.emit("authorize-error",err);
+					client.emit("authorize-error",{message:err.message});
 				}
 			});
 		});
