@@ -10,11 +10,10 @@ function clientOnline(id,client){
 	if(onlineClients[id]) throw new Error("client is already online");
 	onlineClients[id]=client;
 	client.userID=id;
-	client.loggedin=true;
+	cancleLoginTimeout(client); //cancle login timeout when logged in
 }
 function clientOffline(client){
 	if(!client.userID) return; //client is not logged in yet
-	client.loggedin=false;
 	delete onlineClients[client.userID];
 }
 function clientEmit(ids,eventName,data){
@@ -25,13 +24,16 @@ function clientEmit(ids,eventName,data){
 	});
 }
 function setLoginTimeout(client){
-	client.loggedin=false;
-	setTimeout(()=>{
-		if(!client.loggedin){ //if client isn't logged in yet
+	if(client.loginTimeout) return; //already has a timer
+	client.loginTimeout=setTimeout(()=>{
 			client.emit('authorize-error',{message:'Login timeout'});
 			client.disconnect();
-		}
 	},LOGIN_TIMELIMIT);
+}
+function cancleLoginTimeout(client){
+	if(!client.loginTimeout) return; //login timeout doesn't exist
+	clearTimeout(client.loginTimeout);
+	delete client.loginTimeout;
 }
 //exported function: push a notification to its receivers
 exports.pushNewNotification=function(notification){
@@ -76,6 +78,7 @@ exports.init=function(server){
 		//close connection
 		client.on('disconnect',()=>{
 			clientOffline(client);
+			cancleLoginTimeout(client);
 		});
 
 	});
