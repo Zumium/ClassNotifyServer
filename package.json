@@ -1,0 +1,28 @@
+{
+  "name": "class-notice-server",
+  "version": "1.0.0",
+  "description": "Class Notification APP Server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zumium/ClassNotifyServer.git"
+  },
+  "author": "Zumium",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Zumium/ClassNotifyServer/issues"
+  },
+  "homepage": "https://github.com/Zumium/ClassNotifyServer#readme",
+  "dependencies":{
+    "express": ">=4.14.0",
+    "body-parser": ">=1.15.0",
+    "passport": ">=0.3.0",
+    "passport-http": ">=0.3.0",
+    "bluebird": ">=3.4.0",
+    "sequelize": ">=3.23.0",
+    "socket.io": ">=1.4.0"
+  }
+}
