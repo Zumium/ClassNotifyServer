@@ -7,7 +7,7 @@ var studentNotification=require('./student-noti');
 var router=module.exports=express.Router();
 
 //=============================================
-router.get('/',studentNotification); // url=/:sid/notifications
+router.use('/',studentNotification); // url=/:sid/notifications
 //====================================
 router.use('/',studentSid);    // url=/:sid
 //====================================
