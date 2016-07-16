@@ -7,7 +7,7 @@ var util=require('util');
 var filtObject=require('../tools/filt-object');
 var genError=require('../tools/gene-error');
 
-var router=exports.router=express.Router();
+var router=module.exports=express.Router();
 
 router.get('/',(req,res,next)=>{
 	ns.getAllNotifications().then((notifications)=>{

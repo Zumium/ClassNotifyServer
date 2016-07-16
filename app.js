@@ -8,8 +8,8 @@ var push=require('./services/pushservice');
 
 var app=express();
 
-var student=require('./routers/student');
-var notification=require('./routers/notification');
+var studentRouter=require('./routers/student');
+var notificationRouter=require('./routers/notification');
 //Initialize passport with given strategy
 passport.use(apiAuthStrategy);
 
@@ -17,8 +17,8 @@ app.use(passport.initialize());
 app.use(passport.authenticate('basic',{session:false}));
 app.use(bodyParser.json());
 
-app.use('/users',student.router);
-app.use('/notifications',notification.router);
+app.use('/users',studentRouter);
+app.use('/notifications',notificationRouter);
 
 app.use(errorHandler);
 

@@ -6,7 +6,7 @@ var ps=require('../services/pmsservice');
 var genError=require('../tools/gene-error');
 var filtObject=require('../tools/filt-object');
 
-var router=exports.router=express.Router();
+var router=module.exports=express.Router();
 
 //====================================
 //这是处理/users路径的路由中间件
