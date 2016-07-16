@@ -10,7 +10,7 @@ var router=module.exports=express.Router();
 //====================================
 //下面是操作/users/:sid路径的中间件
 //====================================
-router.get('/',(req,res,next)=>{
+router.get('/:sid',(req,res,next)=>{
 	var queriedUser=req.params.sid;
 	us.getStudentInfo(queriedUser).then((student)=>{
 		if(!student) return next(genError(404,'No such student'));
@@ -20,7 +20,7 @@ router.get('/',(req,res,next)=>{
 	});
 });
 
-router.put('/',(req,res,next)=>{
+router.put('/:sid',(req,res,next)=>{
 	var queriedUser=req.params.sid;
 	var currentUser=req.user;
 	var data=req.body;
@@ -48,7 +48,7 @@ router.put('/',(req,res,next)=>{
 	});
 });
 
-router.patch('/',(req,res,next)=>{
+router.patch('/:sid',(req,res,next)=>{
 	var queriedUser=req.params.sid;
 	var currentUser=req.user;
 	var data=req.body;
@@ -78,7 +78,7 @@ router.patch('/',(req,res,next)=>{
 	});
 });
 
-router.delete('/',(req,res,next)=>{
+router.delete('/:sid',(req,res,next)=>{
 	var queriedUser=req.params.sid;
 	var currentUser=req.user;
 

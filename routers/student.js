@@ -14,7 +14,7 @@ var router=module.exports=express.Router();
 //====================================
 router.use('/',studentPerson);
 //====================================
-router.use('/:sid',studentSid);
+router.use('/',studentSid);
 //=============================================
 //接下来是处理/users/:sid/notifications的中间件
 //=============================================
