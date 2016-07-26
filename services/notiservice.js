@@ -7,8 +7,8 @@ exports.getPersonalNotifications=function(id,options){
 	return new Promise((resolve,reject)=>{
 		//默认设置
 		var allOptions={
-			star: 2, //是否加星
-	       		read: 2, //是否已读
+			star: 'all', //是否加星
+	       		read: 'all', //是否已读
 	       		start: 0,//截取开始处
 	       		end: -1, //截取结束处
 	       		sent: false
@@ -140,12 +140,12 @@ exports.getAllNotifications=function(){
 
 function filterOptions(opt){
 	var options={};
-	if(opt['star']!=2){
-		if(opt['star']==1) options['star']=true;
+	if(opt['star']!='all'){
+		if(opt['star']=='yes') options['star']=true;
 		else options['star']=false;
 	}
-	if(opt['read']!=2){
-		if(opt['read']==1) options['read']=true;
+	if(opt['read']!='all'){
+		if(opt['read']=='yes') options['read']=true;
 		else options['read']=false;
 	}
 	return options;
