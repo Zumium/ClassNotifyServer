@@ -11,7 +11,7 @@ var router=module.exports=express.Router();
 //下面是操作/users/:sid路径的中间件
 //====================================
 router.get('/:sid',(req,res,next)=>{
-	var queriedUser=req.params.sid;
+	var queriedUser=req.params.sid=='self'?req.user:req.params.sid;
 	us.getStudentInfo(queriedUser).then((student)=>{
 		if(!student) return next(genError(404,'No such student'));
 		res.json(student.dataValues);
@@ -21,8 +21,8 @@ router.get('/:sid',(req,res,next)=>{
 });
 
 router.put('/:sid',(req,res,next)=>{
-	var queriedUser=req.params.sid;
 	var currentUser=req.user;
+	var queriedUser=req.params.sid=='self'?currentUser:req.params.sid;
 	var data=req.body;
 
 	Promise.join(us.isAdmin(req.user),ps.checkAttributes(['name','character'],['id','password'],data),us.isCharacterValid(data.character),(isAdmin,isGoodAttr,isCorrectCharacter)=>{
@@ -49,8 +49,8 @@ router.put('/:sid',(req,res,next)=>{
 });
 
 router.patch('/:sid',(req,res,next)=>{
-	var queriedUser=req.params.sid;
 	var currentUser=req.user;
+	var queriedUser=req.params.sid=='self'?currentUser:req.params.sid;
 	var data=req.body;
 
 	Promise.join(us.isAdmin(currentUser),ps.isOperateOnSelf(req,queriedUser),ps.checkAttributes(['name'],null,data),us.isCharacterValid(data.character),ps.checkAttributes(['password'],null,data),(isAdmin,isSelf,hasName,isCorrectCharacter,hasPassword)=>{
@@ -79,8 +79,8 @@ router.patch('/:sid',(req,res,next)=>{
 });
 
 router.delete('/:sid',(req,res,next)=>{
-	var queriedUser=req.params.sid;
 	var currentUser=req.user;
+	var queriedUser=req.params.sid=='self'?currentUser:req.params.sid;
 
 	Promise.join(us.isAdmin(currentUser),(isAdmin)=>{
 		if(!isAdmin) return next(genError(403,'Not permitted'));

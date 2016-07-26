@@ -8,8 +8,8 @@ var filtObject=require('../tools/filt-object');
 var router=module.exports=express.Router();
 
 router.get('/:sid/notifications',(req,res,next)=>{
-	var queriedUser=req.params.sid;
 	var currentUser=req.user;
+	var queriedUser=req.params.sid=='self'?currentUser:req.params.sid;
 	//权限检查，不允许查看别人的通知
 	//if(queriedUser!=currentUser) return res.status(403).json({message:'Not allow to query others\' notifications'});
 	Promise.join(ps.isOperateOnSelf(req,queriedUser),(isSelf)=>{
