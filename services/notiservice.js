@@ -113,7 +113,7 @@ exports.publishNewNotification=function(newNotification){
 				if(count==0){
 					//推送新通知
 					pushService.pushNewNotification(notification);
-					resolve();
+					resolve(notification);
 				}
 			};
 

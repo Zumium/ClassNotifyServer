@@ -32,8 +32,8 @@ router.post('/',(req,res,next)=>{
 
 		data=filtObject(['title','content','receivers'],data);
 		data['sender']=currentUser;
-		ns.publishNewNotification(data).then(()=>{
-			res.sendStatus(200);
+		ns.publishNewNotification(data).then((notification)=>{
+			res.location('/notifications/'+notification.get('id')).sendStatus(201);
 		},(err)=>{
 			next(genError(400,err.message));
 		});

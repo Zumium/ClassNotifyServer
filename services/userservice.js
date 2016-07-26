@@ -127,8 +127,8 @@ exports.addNewStudent=function(studentInfo){
 			return reject(NoSuchCharacterError);
 		}
 		//验证成功
-		db.Student.create(studentInfo).then(()=>{
-			resolve();
+		db.Student.create(studentInfo).then((student)=>{
+			resolve(student);
 		},(err)=>{
 			err.suggestStatusCode=500;
 			reject(err);

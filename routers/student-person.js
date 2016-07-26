@@ -27,8 +27,8 @@ router.post('/',(req,res,next)=>{
 	Promise.join(us.isAdmin(req.user),(result)=>{
 		//非班委用户，禁止该操作
 		if(!result) return next(genError(403,'Not permitted'));
-		us.addNewStudent(req.body).then(()=>{
-			res.sendStatus(200);
+		us.addNewStudent(req.body).then((student)=>{
+			res.location('/users/'+student.get('id')).sendStatus(201);
 		},(err)=>{
 			next(err);
 		});
