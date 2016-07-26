@@ -34,8 +34,8 @@ router.get('/:nid/status',(req,res,next)=>{
 //===================================================================
 router.get('/:nid/status/:sid',(req,res,next)=>{
 	var queriedNotification=req.params.nid;
-	var queriedStudent=req.params.sid;
 	var currentUser=req.user;
+	var queriedStudent=req.params.sid=='self'?currentUser:req.params.sid;
 	Promise.join(ps.isOperateOnSelf(req,queriedStudent),ps.isSender(queriedNotification,currentUser),(isSelf,isSender)=>{
 		if(isSelf){
 			ns.getNotificationReadingStatusById(queriedNotification,currentUser).then((theStatus)=>{
@@ -65,9 +65,9 @@ router.get('/:nid/status/:sid',(req,res,next)=>{
 });
 
 router.patch('/:nid/status/:sid',(req,res,next)=>{
-	var queriedStudent=req.params.sid;
 	var queriedNotification=req.params.nid;
 	var currentUser=req.user;
+	var queriedStudent=req.params.sid=='self'?currentUser:req.params.sid;
 	var data=req.body;
 	Promise.join(ps.isOperateOnSelf(req,queriedStudent),(isSelf)=>{
 		if(!isSelf) return next(genError(403,'Not permitted'));
