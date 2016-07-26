@@ -8,7 +8,7 @@ exports.getPersonalNotifications=function(id,options){
 		//默认设置
 		var allOptions={
 			star: 'all', //是否加星
-	       		read: 'all', //是否已读
+			read: 'all', //是否已读
 	       		start: 0,//截取开始处
 	       		end: -1, //截取结束处
 	       		sent: false
