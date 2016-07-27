@@ -9,8 +9,8 @@ exports.getPersonalNotifications=function(id,options){
 		var allOptions={
 			star: 'all', //是否加星
 			read: 'all', //是否已读
-	       		start: 0,//截取开始处
-	       		end: -1, //截取结束处
+	       		start: '0',//截取开始处
+	       		end: '-1', //截取结束处
 	       		sent: false
 		};
 		//合并参数里的设置
@@ -26,7 +26,10 @@ exports.getPersonalNotifications=function(id,options){
 					return reject(NoSuchUserError);
 				}
 				student.getSentNotifications({
-					attributes:{exclude:['createdAt','updatedAt']}
+					attributes:{exclude:['createdAt','updatedAt']},
+					order:[['publishDate','DESC']],
+					offset:parseInt(allOptions['start']),
+					limit: calculateLimit(allOptions)
 				}).then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
 			},(err)=>{reject(err);});
 		}
@@ -152,7 +155,11 @@ function filterOptions(opt){
 }
 
 function calculateLimit(opt){
-	if(opt['end']==-1) return undefined;
-	else if(opt['start']>opt['end']) return undefined; //起始位置大于结束位置，输入有错误，按为定义结束位置处理
-	else return opt['end']-opt['start']+1;
+	var start=null;
+	var end=null;
+	if((start=parseInt(opt.start))==NaN || (end=parseInt(opt.end))==NaN)
+		return undefined;
+	if(end==-1) return undefined;
+	else if(start>end) return undefined; //起始位置大于结束位置，输入有错误，按为定义结束位置处理
+	else return end-start+1;
 }
