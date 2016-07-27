@@ -10,7 +10,7 @@ var router=module.exports=express.Router();
 router.get('/:nid',(req,res,next)=>{
 	var queriedNotification=req.params.nid;
 	ns.getNotificationById(queriedNotification).then((notification)=>{
-		if(!notification) next(genError(404,'No such notification'));
+		if(!notification) return next(genError(404,'No such notification'));
 		res.status(200).json(notification.get());
 	},(err)=>{
 		next(err);

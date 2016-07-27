@@ -14,7 +14,7 @@ router.get('/:sid',(req,res,next)=>{
 	var queriedUser=req.params.sid=='self'?req.user:req.params.sid;
 	us.getStudentInfo(queriedUser).then((student)=>{
 		if(!student) return next(genError(404,'No such student'));
-		res.json(student.dataValues);
+		res.json(student.get());
 	},(err)=>{
 		next(err);
 	});
@@ -56,14 +56,14 @@ router.patch('/:sid',(req,res,next)=>{
 	Promise.join(us.isAdmin(currentUser),ps.isOperateOnSelf(req,queriedUser),ps.checkAttributes(['name'],null,data),us.isCharacterValid(data.character),ps.checkAttributes(['password'],null,data),(isAdmin,isSelf,hasName,isCorrectCharacter,hasPassword)=>{
 		//start to check
 		if(hasName||isCorrectCharacter)
-			if(!isAdmin) next(genError(403,'Not permitted'));
+			if(!isAdmin) return next(genError(403,'Not permitted'));
 		if(hasPassword)
-			if(!isSelf) next(genError(403,'Not permitted'));
+			if(!isSelf) return next(genError(403,'Not permitted'));
 		if(data.character && !isCorrectCharacter) return next(genError(400,'Invalid character'));
 		//end check
 		//start to patch
 		us.getStudentInfo(queriedUser).then((student)=>{
-			if(!student) next(genError(404,'No such student'));
+			if(!student) return next(genError(404,'No such student'));
 			var updateAttributes=filtObject(['name','character','password'],data);
 			student.update(updateAttributes).then(()=>{
 				res.sendStatus(200);

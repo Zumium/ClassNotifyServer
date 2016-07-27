@@ -12,18 +12,16 @@ router.get('/:nid/status',(req,res,next)=>{
 	var queriedNotification=req.params.nid;
 	var currentUser=req.user;
 	Promise.join(ps.isSender(queriedNotification,currentUser),(isSender)=>{
-		if(!isSender) next(genError(403,'Not permitted'));
+		if(!isSender) return next(genError(403,'Not permitted'));
 		ns.getNotificationReadingStatusById(queriedNotification).then((statuses)=>{
-			var results=[];
-			statuses.forEach((eachStatus)=>{
+			res.status(200).json(statuses.map((eachStatus)=>{
 				var mainPart=eachStatus.get();
 				var readStatus=mainPart['notificationStatus'].get('read');
 				//去除了加星信息，对于通知的发送者来说不应该知道该通知的阅读者是否加星
 				delete mainPart['notificationStatus'];
 				mainPart['read']=readStatus;
-				results.push(mainPart);
-			});
-			res.status(200).json(results);
+				return mainPart;
+			}));
 		},(err)=>{
 			next(err);
 		});
@@ -60,7 +58,7 @@ router.get('/:nid/status/:sid',(req,res,next)=>{
 
 			},(err)=>{next(err);});
 		}
-		else{next(genError(403,'Not permitted'));}
+		else{return next(genError(403,'Not permitted'));}
 	}).then(null,(err)=>{next(err);});
 });
 

@@ -16,13 +16,13 @@ router.get('/:sid/notifications',(req,res,next)=>{
 		//权限检查，不允许查看别人的通知
 		if(!isSelf) return next(genError(403,'Not permitted'));
 		ns.getPersonalNotifications(queriedUser,req.query).then((notifications)=>{
-			var results=[];
-			notifications.forEach((eachNoti)=>{
+			res.status(200).json(notifications.map((eachNoti)=>{
+				//提取出主要信息
+				//并删除notificationStatus部分
 				var t=eachNoti.get();
 				delete t['notificationStatus'];
-				results.push(t);
-			});
-			res.status(200).json(results);
+				return t;
+			}));
 		},(err)=>{
 			next(err);
 		});

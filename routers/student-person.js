@@ -11,11 +11,9 @@ var router=module.exports=express.Router();
 router.get('/',(req,res,next)=>{
 	//GET方法，获取所有学生的信息
 	us.getStudentInfo('all').then((students)=>{
-		var stuInfo=[];
-		students.forEach((eachStudent)=>{
-			stuInfo.push(eachStudent.dataValues);
-		});
-		res.json(stuInfo);
+		res.json(students.map((eachStudent)=>{
+			return eachStudent.get();
+		}));
 	},(err)=>{
 		next(err);
 	});
