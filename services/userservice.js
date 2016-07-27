@@ -50,7 +50,7 @@ exports.changeCharacter=function(id,newCharacter){
 }
 
 //获取个人信息
-exports.getStudentInfo=function(ids){
+var getStudentInfo=exports.getStudentInfo=function(ids){
 	return new Promise((resolve,reject)=>{
 		if(util.isString(ids)){
 			if(ids==='all'){
@@ -140,3 +140,29 @@ exports.isCharacterValid=function(character){
 	return characterList.indexOf(character)!=-1;
 }
 
+//替换ID为用户信息
+exports.replaceUserIdToInfo=function(src,keyName){
+	return new Promise((resolve,reject)=>{
+		if(util.isArray(src)){
+			Promise.all(src.map((each)=>{
+				return getSenderConvertingPromise(each,keyName);
+			})).then((notifications)=>{
+				resolve(notifications);
+			},(err)=>{reject(err);});
+		}
+		else{
+			getSenderConvertingPromise(src,keyName).then((notification)=>{
+				resolve(notification);
+			},(err)=>{reject(err);});
+		}
+	});
+}
+//helper function to 'replaceUserIdToInfo' function
+function getSenderConvertingPromise(src,keyName){
+	return new Promise((resolve,reject)=>{
+		getStudentInfo(src[keyName]).then((sender)=>{
+			src[keyName]=sender.get();
+			resolve(src);
+		},(err)=>{reject(err);});
+	});
+}

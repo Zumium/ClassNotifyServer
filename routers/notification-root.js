@@ -11,10 +11,11 @@ var router=module.exports=express.Router();
 
 router.get('/',(req,res,next)=>{
 	ns.getAllNotifications().then((notifications)=>{
-		res.status(200).json(
-		notifications.map((eachNotification)=>{
+		us.replaceUserIdToInfo(notifications.map((eachNotification)=>{
 			return eachNotification.get();
-		}));
+		}),'sender').then((notifications)=>{
+			res.status(200).json(notifications);
+		},(err)=>{next(err)});
 	},(err)=>{
 		next(err);
 	});

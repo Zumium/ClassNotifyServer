@@ -2,6 +2,7 @@ var express=require('express');
 var ns=require('../services/notiservice');
 var Promise=require('bluebird');
 var ps=require('../services/pmsservice');
+var us=require('../services/userservice');
 var genError=require('../tools/gene-error');
 var filtObject=require('../tools/filt-object');
 
@@ -16,13 +17,15 @@ router.get('/:sid/notifications',(req,res,next)=>{
 		//权限检查，不允许查看别人的通知
 		if(!isSelf) return next(genError(403,'Not permitted'));
 		ns.getPersonalNotifications(queriedUser,req.query).then((notifications)=>{
-			res.status(200).json(notifications.map((eachNoti)=>{
+			us.replaceUserIdToInfo(notifications.map((eachNoti)=>{
 				//提取出主要信息
 				//并删除notificationStatus部分
 				var t=eachNoti.get();
 				delete t['notificationStatus'];
 				return t;
-			}));
+			}),'sender').then((notis)=>{
+				res.status(200).json(notis);
+			},(err)=>{next(err);});
 		},(err)=>{
 			next(err);
 		});

@@ -11,7 +11,9 @@ router.get('/:nid',(req,res,next)=>{
 	var queriedNotification=req.params.nid;
 	ns.getNotificationById(queriedNotification).then((notification)=>{
 		if(!notification) return next(genError(404,'No such notification'));
-		res.status(200).json(notification.get());
+		us.replaceUserIdToInfo(notification.get(),'sender').then((notification)=>{
+			res.status(200).json(notification);
+		},(err)=>{next(err);});
 	},(err)=>{
 		next(err);
 	});
