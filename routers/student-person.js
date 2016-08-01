@@ -14,9 +14,7 @@ router.get('/',(req,res,next)=>{
 		res.json(students.map((eachStudent)=>{
 			return eachStudent.get();
 		}));
-	},(err)=>{
-		next(err);
-	});
+	},next);
 });
 
 router.post('/',(req,res,next)=>{
@@ -24,13 +22,9 @@ router.post('/',(req,res,next)=>{
 	//只有班委才能添加
 	Promise.join(us.isAdmin(req.user),(result)=>{
 		//非班委用户，禁止该操作
-		if(!result) return next(genError(403,'Not permitted'));
-		us.addNewStudent(req.body).then((student)=>{
-			res.location('/users/'+student.get('id')).sendStatus(201);
-		},(err)=>{
-			next(err);
-		});
-	}).then(null,(err)=>{
-		next(err);
-	});
+		if(!result) throw genError(403,'Not permitted');
+		return us.addNewStudent(req.body);
+	}).then((student)=>{
+		res.location('/users/'+student.get('id')).sendStatus(201);
+	}).catch(next);
 });
