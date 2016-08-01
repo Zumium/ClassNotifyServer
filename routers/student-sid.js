@@ -15,7 +15,7 @@ router.get('/:sid',(req,res,next)=>{
 	us.getStudentInfo(queriedUser).then((student)=>{
 		if(!student) throw genError(404,'No such student');
 		res.json(student.get());
-	}).catch(err);
+	}).catch(next);
 });
 
 router.put('/:sid',(req,res,next)=>{
