@@ -9,7 +9,5 @@ module.exports=new strategy((id,password,done)=>{
 		else{
 			done(null,false,msg);
 		}
-	},(err)=>{
-		done(err);
-	});
+	},done);
 });
