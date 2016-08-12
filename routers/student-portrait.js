@@ -25,7 +25,7 @@ router.put('/:sid/portrait',
 	(req,res,next)=>{
 		if(req.user!=req.params.sid)
 			return next(genError('403','Not permitted'));
-		pts.setPortrait(req.params.username,req)
+		pts.setPortrait(req.params.sid,req)
 			.then(()=>{
 				res.sendStatus(200);
 			})
