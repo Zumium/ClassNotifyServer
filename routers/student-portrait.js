@@ -1,5 +1,6 @@
 var pts=require('../services/portraitservice');
 var genError=require('../tools/gene-error');
+var passport=require('passport');
 var express=require('express');
 
 var router=module.exports=express.Router();
