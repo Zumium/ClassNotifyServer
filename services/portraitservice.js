@@ -4,9 +4,11 @@ var grid=require('gridfs-stream');
 
 const prefix='PORTRAIT_';
 const emptyPortrait=prefix+'DEFAULT';
+const databaseName='classnotifyPortrait';
+
 var isDbOpened=false;
 
-var db=new mongo.Db('locationpost',new mongo.Server('mongodb',27017));
+var db=new mongo.Db(databaseName,new mongo.Server('mongodb',27017));
 var gfs=null;
 
 function getFileName(username){
