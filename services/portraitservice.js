@@ -34,11 +34,22 @@ exports.setPortrait=function(username,instream){
 	return new Promise((resolve,reject)=>{
 		if(!username || !instream)
 			return reject(new Error('username or instream is empty'));
-		var gfsWriteStream=gfs.createWriteStream({filename:getFileName(username)});
-		gfsWriteStream.on('finish',resolve);
-		gfsWriteStream.on('error',reject);
-		instream.on('error',reject);
-		instream.pipe(gfsWriteStream);
+		var option={filename:getFileName(username)};
+		gfs.existAsync(option)
+		.then((found)=>{
+			if(found)
+				return gfs.removeAsync(option);
+			else
+				return;
+		})
+		.then(()=>{
+			var gfsWriteStream=gfs.createWriteStream(option);
+			gfsWriteStream.on('finish',resolve);
+			gfsWriteStream.on('error',reject);
+			instream.on('error',reject);
+			instream.pipe(gfsWriteStream);
+		})
+		.catch(reject);
 	});
 }
 
