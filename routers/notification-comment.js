@@ -1,6 +1,7 @@
 var express=require('express');
 var Promise=require('bluebird');
 var util=require('util');
+var _=require('underscore');
 var cs=require('../services/commentservice');
 var us=require('../services/userservice');
 var ns=require('../services/notiservice');
@@ -14,7 +15,9 @@ router.get('/:nid/comments',(req,res,next)=>{
 	.then((isExist)=>{
 		if(!isExist)
 			throw genError(404,'No such notification');
-		return cs.getComments(req.params.nid);
+
+		var segmentSelector=_.pick(_.mapObject(_.pick(req.query,'start','end'),(val)=>parseInt(val)),(val)=>util.isNumber(val));
+		return cs.getComments(req.params.nid,segmentSelector);
 	})
 	.then((comments)=>{
 		return us.replaceUserIdToInfo(comments.map((each)=>each.toJSON()),'sender');
