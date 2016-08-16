@@ -138,6 +138,16 @@ exports.getAllNotifications=function(){
 	});
 }
 
+exports.notificationExists=function(id){
+	return new Promise((resolve,reject)=>{
+		db.Notification.count({where:{id:id}})
+		.then((count)=>{
+			resolve(count==1);
+		})
+		.catch(reject);
+	});
+}
+
 function filterOptions(opt){
 	var options={};
 	if(opt['star']!='all'){
