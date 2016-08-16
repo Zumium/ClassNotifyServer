@@ -1,4 +1,5 @@
 var db=require('../repositories/db');
+var genError=require('../tools/gene-error');
 var Promise=require('bluebird');
 var pushService=require('./pushservice');
 
@@ -19,38 +20,38 @@ exports.getPersonalNotifications=function(id,options){
 		}
 		if(allOptions.sent){
 			//作为发送者发送出去的通知
-			db.Student.findOne({where:{id:id}}).then((student)=>{
-				if(!student){
-					var NoSuchUserError=new Error('No such student');
-					NoSuchUserError.suggestStatusCode=404;
-					return reject(NoSuchUserError);
-				}
-				student.getSentNotifications({
+			db.Student.findOne({where:{id:id}})
+			.then((student)=>{
+				if(!student)
+					throw genError(404,'No such student');
+				return student.getSentNotifications({
 					attributes:{exclude:['createdAt','updatedAt']},
 					order:[['publishDate','DESC']],
 					offset:parseInt(allOptions['start']),
 					limit: calculateLimit(allOptions)
-				}).then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
-			},(err)=>{reject(err);});
+				});
+			})
+			.then(resolve)
+			.catch(reject);
 		}
 		else{
 			//作为接受者收到的通知
-			db.Student.findOne({where:{id:id}}).then((student)=>{
-				if(!student){
-					var NoSuchUserError=new Error('No such student');
-					NoSuchUserError.suggestStatusCode=404;
-					return reject(NoSuchUserError);
-				}
+			db.Student.findOne({where:{id:id}})
+			.then((student)=>{
+				if(!student)
+					throw genError(404,'No such student');
 				//已查询到接受者
 				//开始读取制定信息
-				student.getReceivedNotifications({
+				return student.getReceivedNotifications({
 					attributes:{exclude:['createdAt','updatedAt']},
 					through:{where:filterOptions(allOptions)},
 					order:[['publishDate','DESC']],
 					offset:parseInt(allOptions['start']),
 					limit: calculateLimit(allOptions)
-				}).then((notifications)=>{resolve(notifications);},(err)=>{reject(err);});
-			},(err)=>{reject(err);});
+				});
+			})
+			.then(resolve)
+			.catch(reject);
 		}
 	});
 }
@@ -61,37 +62,33 @@ var getNotiById=exports.getNotificationById=function(id){
 			where:{id:id},
 			attributes:{exclude:['createdAt','updatedAt']}
 		}).then((notification)=>{
-			if(!notification){
-				var NoSuchNotificationError=new Error('No such notification');
-				NoSuchNotificationError.suggestStatusCode=404;
-				return reject(NoSuchNotificationError);
-			}
+			if(!notification)
+				throw genError(404,'No such notification');
 			resolve(notification);
-		},(err)=>{reject(err);});
+		})
+		.catch(reject);
 	});
 }
 
 exports.getNotificationReadingStatusById=function(id,sid){
 	return new Promise((resolve,reject)=>{
-		getNotiById(id).then((notification)=>{
-			notification.getReceivers({
+		getNotiById(id)
+		.then((notification)=>{
+			return notification.getReceivers({
 				attributes:{exclude:['password','createdAt','updatedAt']},
 				joinTableAttributes:['id','read','star']
-			}).then((results)=>{
-				if(sid){
-					var searchResult=results.find((each)=>{
-						return sid==each.get('id');
-					});
-					if(searchResult) resolve(searchResult);
-					else {
-						var NoSuchReceiverError=new Error('This notification doesn\'t have such a receiver');
-						NoSuchReceiverError.suggestStatusCode=404;
-						reject(NoSuchReceiverError);
-					}
-				}
-				else resolve(results);
-			},(err)=>{reject(err);});
-		},(err)=>{reject(err);});
+			});
+		})
+		.then((results)=>{
+			if(sid){
+				var searchResult=results.find((each)=>sid==each.get('id'));
+				if(searchResult) resolve(searchResult);
+				else 
+					throw genError(404,'This notification doesn\'t have such a receiver');
+			}
+			else resolve(results);
+		})
+		.catch(reject);
 	});
 }
 
@@ -108,36 +105,36 @@ exports.publishNewNotification=function(newNotification){
 		//仅复制所需部分进行添加
 		newNoti['title']=newNotification['title'];
 		newNoti['content']=newNotification['content'];
-		db.Notification.create(newNoti).then((notification)=>{
-			//新通知添加成功
-			var count=2;
-			var check=()=>{
-				count--;
-				if(count==0){
-					//推送新通知
-					pushService.pushNewNotification(notification);
-					resolve(notification);
-				}
-			};
 
+		db.Notification.create(newNoti)
+		.then((notification)=>{
 			//设置发送者
-			db.Student.findOne({where:{id:newNotification['sender']}}).then((senderStudent)=>{
-				notification.setSender(senderStudent).then(()=>{check();},(err)=>{reject(err);});
-			},(err)=>{reject(err);});
+			var setSender=db.Student.findOne({where:{id:newNotification['sender']}})
+			.then((senderStudent)=>{
+				return notification.setSender(senderStudent);
+			});
 			//设置接受者
-			db.Student.findAll({where:{id:newNotification['receivers']}}).then((receiverStudents)=>{
-				notification.setReceivers(receiverStudents,{read:false,star:false}).then(()=>{check();},(err)=>{reject(err);});
-			},(err)=>{reject(err);});
+			var setReceivers=db.Student.findAll({where:{id:newNotification['receivers']}})
+			.then((receiverStudents)=>{
+				return notification.setReceivers(receiverStudents,{read:false,star:false});
+			});
 			//---
-		},(err)=>{reject(err);});
+			return Promise.join(setSender,setReceivers,()=>{
+				return notification;
+			});
+		})
+		.then((notification)=>{
+			pushService.pushNewNotification(notification);
+			resolve(notification);
+		})
+		.catch(reject);
 	});
 }
 
 exports.getAllNotifications=function(){
 	return new Promise((resolve,reject)=>{
-		db.Notification.findAll({attributes:{exclude:['createdAt','updatedAt']}}).then((notis)=>{
-			resolve(notis);
-		},(err)=>{reject(err);});
+		db.Notification.findAll({attributes:{exclude:['createdAt','updatedAt']}})
+		.then(resolve,reject);
 	});
 }
 
