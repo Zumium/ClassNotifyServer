@@ -42,9 +42,7 @@ router.get('/:nid/status/:sid',(req,res,next)=>{
 					mainPart[key]=statusPart[key];
 				delete mainPart['notificationStatus'];
 				res.status(200).json(mainPart);
-			},(err)=>{
-				next(err);
-			});
+			},next);
 		}
 		else if(isSender){
 			ns.getNotificationReadingStatusById(queriedNotification,queriedStudent).then((theStatus)=>{
@@ -54,7 +52,7 @@ router.get('/:nid/status/:sid',(req,res,next)=>{
 				delete mainPart['notificationStatus'];
 				res.status(200).json(mainPart);
 
-			},(err)=>{next(err);});
+			},next);
 		}
 		else{throw genError(403,'Not permitted');}
 	}).catch(next);
