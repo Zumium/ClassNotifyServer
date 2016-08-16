@@ -11,9 +11,7 @@ var router=module.exports=express.Router();
 
 router.get('/',(req,res,next)=>{
 	ns.getAllNotifications().then((notifications)=>{
-		return us.replaceUserIdToInfo(notifications.map((eachNotification)=>{
-			return eachNotification.get();
-		}),'sender');
+		return us.replaceUserIdToInfo(notifications.map((eachNotification)=>eachNotification.get()),'sender');
 	}).then((notifications)=>{
 		res.status(200).json(notifications);
 	}).catch(next);

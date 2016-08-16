@@ -1,4 +1,5 @@
 var db=require('../repositories/db');
+var genError=require('../tools/gene-error');
 var Promise=require('bluebird');
 var util=require('util');
 
@@ -12,9 +13,7 @@ exports.vertifyUserLogin=function(id,password){
 			if(!student) return resolve(false,{message:'Username or password is wrong'});
 			else if(student.password!=password) return resolve(false,{message:'Username or password is wrong'});
 			else return resolve(true);
-		},(err)=>{
-			reject(err);
-		});
+		},reject);
 	});
 }
 
@@ -24,28 +23,33 @@ exports.isAdmin=function(id){
 		db.Student.findOne({where:{id:id}}).then((student)=>{
 			if(student.character=='同学') return resolve(false);
 			else return resolve(true);
-		},(err)=>{reject(err);});
+		},reject);
 	});
 }
 
 //更换密码
 exports.changePassword=function(id,newPassword){
 	return new Promise((resolve,reject)=>{
-		db.Student.findOne({where:{id:id}}).then((student)=>{
+		db.Student.findOne({where:{id:id}})
+		.then((student)=>{
 			student.password=newPassword;
-			student.save();
-			resolve();
-		},(err)=>{reject(err);});
+			return student.save();
+		})
+		.then(resolve)
+		.catch(reject);
 	});
 }
 
 //更改职位
 exports.changeCharacter=function(id,newCharacter){
 	return new Promise((resolve,reject)=>{
-		db.Student.findOne({where:{id:id}}).then((student)=>{
+		db.Student.findOne({where:{id:id}})
+		.then((student)=>{
 			student.character=newCharacter;
-			student.save();
-		},(err)=>{reject(err);});
+			return student.save();
+		})
+		.then(resolve)
+		.catch(reject);
 	});
 }
 
@@ -58,13 +62,11 @@ var getStudentInfo=exports.getStudentInfo=function(ids){
 				db.Student.findAll({
 					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((students)=>{
-					if(!students){
-						var NoSuchStudentError=new Error('No such student');
-						NoSuchStudentError.suggestStatusCode=404;
-						return reject(NoSuchStudentError);
-					}
+					if(!students)
+						throw genError(404,'No such student');
 					resolve(students);
-				},(err)=>{reject(err);});
+				})
+				.catch(reject);
 			}
 			else {
 				//获取指定学生信息
@@ -72,13 +74,11 @@ var getStudentInfo=exports.getStudentInfo=function(ids){
 					where: {id: ids},
 					attributes:{exclude:['password','createdAt','updatedAt']}
 				}).then((student)=>{
-					if(!student){
-						var NoSuchStudentError=new Error('No such student');
-						NoSuchStudentError.suggestStatusCode=404;
-						return reject(NoSuchStudentError);
-					}
+					if(!student)
+						throw genError(404,'No such student');
 					resolve(student);
-				},(err)=>{reject(err);});
+				})
+				.catch(reject);
 			}
 		}
 		else if(util.isArray(ids)){
@@ -89,50 +89,33 @@ var getStudentInfo=exports.getStudentInfo=function(ids){
 				},
 				attributes:{exclude:['password','createdAt','updatedAt']}
 			}).then((students)=>{
-				if(!students){
-					var NoSuchStudentError=new Error('No such student');
-					NoSuchStudentError.suggestStatusCode=404;
-					return reject(NoSuchStudentError);
-				}
+				if(!students)
+					throw genError(404,'No such student');
 				resolve(students);
-			},(err)=>{reject(err);});
+			})
+			.catch(reject);
 		}
-		else return reject(new Error('Wrong argument type'));
-	},(err)=>{reject(err);});
+		else
+			return reject(genError(500,'Wrong argument type'));
+	});
 }
 
 //添加新学生
 exports.addNewStudent=function(studentInfo){
 	return new Promise((resolve,reject)=>{
 		//检查参数
-		if(!studentInfo['name']){
+		if(!studentInfo['name'])
 			//没有姓名，reject
-			var NoUserNameError=new Error('No user\'s name');
-			NoUserNameError.suggestStatusCode=400;
-			return reject(NoUserNameError);
-		}
-		if(!studentInfo['password']){
-			var NoPasswordError=new Error('No user\'s password');
-			NoPasswordError.suggestStatusCode=400;
-			return reject(NoPasswordError);
-		}
-		if(!studentInfo['id']){
-			var NoIdError=new Error('No user\'s id');
-			NoIdError.suggestStatusCode=400;
-			return reject(NoIdError);
-		}
-		if(!studentInfo['character'] || characterList.indexOf(studentInfo['character'])==-1){
-			var NoSuchCharacterError=new Error('No such character');
-			NoSuchCharacterError.suggestStatusCode=400;
-			return reject(NoSuchCharacterError);
-		}
+			return reject(genError(400,'No user\'s name'));
+		if(!studentInfo['password'])
+			return reject(genError(400,'No user\'s password'));
+		if(!studentInfo['id'])
+			return reject(genError(400,'No user\'s id'));
+		if(!studentInfo['character'] || characterList.indexOf(studentInfo['character'])==-1)
+			return reject(genError(400,'No such character'));
+
 		//验证成功
-		db.Student.create(studentInfo).then((student)=>{
-			resolve(student);
-		},(err)=>{
-			err.suggestStatusCode=500;
-			reject(err);
-		});
+		db.Student.create(studentInfo).then(resolve,reject);
 	});
 }
 
@@ -143,18 +126,10 @@ exports.isCharacterValid=function(character){
 //替换ID为用户信息
 exports.replaceUserIdToInfo=function(src,keyName){
 	return new Promise((resolve,reject)=>{
-		if(util.isArray(src)){
-			Promise.all(src.map((each)=>{
-				return getSenderConvertingPromise(each,keyName);
-			})).then((notifications)=>{
-				resolve(notifications);
-			},(err)=>{reject(err);});
-		}
-		else{
-			getSenderConvertingPromise(src,keyName).then((notification)=>{
-				resolve(notification);
-			},(err)=>{reject(err);});
-		}
+		if(util.isArray(src))
+			Promise.all(src.map((each)=>getSenderConvertingPromise(each,keyName))).then(resolve,reject);
+		else
+			getSenderConvertingPromise(src,keyName).then(resolve,reject);
 	});
 }
 //helper function to 'replaceUserIdToInfo' function
@@ -163,6 +138,6 @@ function getSenderConvertingPromise(src,keyName){
 		getStudentInfo(src[keyName]).then((sender)=>{
 			src[keyName]=sender.get();
 			resolve(src);
-		},(err)=>{reject(err);});
+		},reject);
 	});
 }
