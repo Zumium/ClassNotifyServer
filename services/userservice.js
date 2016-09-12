@@ -20,7 +20,8 @@ exports.vertifyUserLogin=function(id,password){
 //返回同学是否是班委
 exports.isAdmin=function(id){
 	return new Promise((resolve,reject)=>{
-		db.Student.findOne({where:{id:id}}).then((student)=>{
+		db.Student.findOne({where:{id:id}})
+		.then((student)=>{
 			if(student.character=='同学') return resolve(false);
 			else return resolve(true);
 		},reject);

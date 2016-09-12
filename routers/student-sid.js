@@ -18,27 +18,7 @@ router.get('/:sid',(req,res,next)=>{
 	}).catch(next);
 });
 
-router.put('/:sid',(req,res,next)=>{
-	var currentUser=req.user;
-	var queriedUser=req.params.sid=='self'?currentUser:req.params.sid;
-	var data=req.body;
-
-	Promise.join(us.isAdmin(req.user),ps.checkAttributes(['name','character'],['id','password'],data),us.isCharacterValid(data.character),(isAdmin,isGoodAttr,isCorrectCharacter)=>{
-		//开始检查
-		if(!isAdmin) throw genError(403,'Not permitted');
-		if(!isGoodAttr) throw genError(400,'Something wrong among the request');
-		if(!isCorrectCharacter) throw genError(400,'Value of character not allowed');
-		//检查完毕
-		return us.getStudentInfo(queriedUser);
-	}).then((student)=>{
-		if(!student) throw genError(404,'No such student');
-		//开始修改
-		return student.update(filtObject(['name','character'],data));
-	}).then(()=>{
-		res.sendStatus(200);
-	}).catch(next);
-});
-
+/* 暂时封存此方法
 router.patch('/:sid',(req,res,next)=>{
 	var currentUser=req.user;
 	var queriedUser=req.params.sid=='self'?currentUser:req.params.sid;
@@ -61,6 +41,7 @@ router.patch('/:sid',(req,res,next)=>{
 		res.sendStatus(200);
 	}).catch(next);
 });
+*/
 
 router.delete('/:sid',(req,res,next)=>{
 	var currentUser=req.user;
