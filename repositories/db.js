@@ -12,7 +12,7 @@ var Student=sequelize.define('student',{
 	id: {
 	   	type: Sequelize.STRING,
    		field: 'ID',
-   		primaryKey: true 
+   		primaryKey: true
 	},
     	name: {
 		type: Sequelize.STRING,
@@ -24,7 +24,7 @@ var Student=sequelize.define('student',{
 	},
 	password: {
 		type: Sequelize.STRING,
-   		field: 'StuPassword' 
+   		field: 'StuPassword'
 	}
 },{
 	charset: 'utf8'
@@ -114,15 +114,11 @@ exports.Notification=Notification;
 exports.NotificationStatus=NotificationStatus;
 
 //sync all models
-exports.syncAll=function(){
-	return new Promise((resolve,reject)=>{
-		Student.sync().then(()=>{
-			Notification.sync().then(()=>{
-				NotificationStatus.sync().then(()=>{
-					resolve();
-				},(err)=>{reject(err);});
-			},(err)=>{reject(err);});
-		},(err)=>{reject(err);});
-	});
-}
-
+exports.syncAll=()=>new Promise((resolve,reject)=>
+	Promise.resolve()
+	.then(()=>Student.sync())
+	.then(()=>Notification.sync())
+	.then(()=>NotificationStatus.sync())
+	.then(resolve)
+	.catch(reject)
+);
