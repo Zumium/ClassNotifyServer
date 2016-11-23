@@ -21,12 +21,12 @@ router.delete('/:nid',(req,res,next)=>{
 	var currentUser=req.user;
 	var queriedNotification=req.params.nid;
 
-	Promise.join(us.isAdmin(currentUser),(isAdmin)=>{
+	Promise.join(us.isAdmin(currentUser),isAdmin=>{
 		if(!isAdmin) throw genError(403,'Not permitted');
 		return ns.getNotificationById(queriedNotification);
-	}).then((queriedNotification)=>{
-		if(!notification) throw genError(404,'No such notification');
-		return notification.destroy();
+	}).then(queriedNotification=>{
+		if(!queriedNotification) throw genError(404,'No such notification');
+		return queriedNotification.destroy();
 	}).then(()=>{
 		res.sendStatus(200);
 	}).catch(next);
